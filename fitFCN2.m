@@ -14,20 +14,20 @@ while ~isempty(P_temp)
     if length(P_temp(:,1))== 1        
         break 
     end
-    [Pareto,place] = prtp(P_temp);
+    [~,place] = prtp(P_temp);
     q = 0; m = 1;
     for k = 1:length(place)
         marker= find(P_temp(place(k),1)==func(:,1));
         func(marker,nfunc+1) = level; marker= [];
     end
     level = level+1;
-    P_temp(place,:) = []; place = []; Pareto = [];
+    P_temp(place,:) = []; place = []; 
 end
 
   
 numLayer = level-1; 
 
-%Make sure all variable have a layer number
+%Make sure all variables have a layer number
 flag = 0;
 for k = 1:chrome
     if func(nfunc+1)==0
@@ -41,7 +41,7 @@ if flag == 1, numLayer = numLayer+1; end
 %Assess similarity layer-by-layer, assess in objective space.
 sigma = 0.75;
 epsilon = 0.25;
-alpha = 1;
+alpha = 5;
 
 F_min = chrome+epsilon;
 for k = 1:numLayer

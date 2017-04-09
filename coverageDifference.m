@@ -1,5 +1,7 @@
 function val = coverageDifference(f1_vals,f2_vals)
 
+
+
 if(length(f1_vals)<2)
     val=0.0;
     return;
@@ -9,7 +11,7 @@ end
 %f1_vals = f1_vals/max(f1_vals);
 %f2_vals = f2_vals/max(f2_vals);
 
-vals = [1-f1_vals,1-f2_vals];
+vals = [1-f1_vals,1-f2_vals]
 % check to make sure input is correct
 [rows,~] = size(vals);
 if rows ==1

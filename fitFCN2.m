@@ -1,6 +1,10 @@
-function [ fit ] = fitFCN2( func,nfunc, V)
+function [ fit ] = fitFCN2(X, ZD_func, V)
 %NSGA algorithm. Use Approach 1 for sorting
-global func nfunc V
+%global func nfunc V
+
+func = ZD_func(X);
+nfunc = length(func);
+
 
 chrome = V;
 %% Find Dominate Points

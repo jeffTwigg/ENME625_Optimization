@@ -1,22 +1,17 @@
-function val = coverageDifference(f1_vals,f2_vals)
+function val = coverageDifference2(input)
+%expecting input to be 
+% [ f1_1, f2_1]
+% [ f1_2, f2_2]
+% [  ... , ...]
+% [ f1_n ,f2_n]
 
+vals = 1-input;
 
-
-if(length(f1_vals)<2)
-    val=0.0;
-    return;
-end
-
-%Normalize the values so that none are greater than 1
-%f1_vals = f1_vals/max(f1_vals);
-%f2_vals = f2_vals/max(f2_vals);
-
-vals = [1-f1_vals,1-f2_vals]
 % check to make sure input is correct
 [rows,~] = size(vals);
-if rows ==1
-    vals = [1-f1_vals',1-f2_vals'];
-end
+%if rows ==1
+%    vals = [1-f1_vals',1-f2_vals'];
+%end
 
 
 %sort values from greatest to smallest in f1
@@ -50,31 +45,3 @@ shared = f1_vals(end)*f2_vals(1);
 val = 1 - (individuals - intersections + shared);
 
 
-
-% x_max = zeros(cols);
-% one_mat = ones(rows,cols);
-% 
-% for i = 1:cols
-%     x_max(i) = max(combined(:,i));
-%     combined(:,i) = combined(:,i)/x_max(i); 
-% end
-% 
-% % Get the Inferior Space
-%  inf_areas = prod(ones - combined,0);
-%  overlap_indeces = nchoosek(1:n,2);
-%  set_1=overlap_indecies
-%  inf_space = sum(inf_areas);
-%  for i=1:length(overlap_indeces)
-%      inf_space = inf_space - combined(set_1)*combined(set_2);
-%  end
-%  inf_space = inf_space + prod(
-%  
-%  
-%  
-%  
-% inf_areas = zeros(1,rows);
-% dom_areas = zeros(1,rows);
-% for i = 1:cols
-%     inf_areas = prod(ones - combined,0)
-%     dom_areas = prod(combind,0)
-% end

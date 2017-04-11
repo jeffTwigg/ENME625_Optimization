@@ -1,6 +1,8 @@
-function [ f,nfunc ] = ZDT1( X,nvar )
+function [ f,nfunc ] = ZDT1( X )
+
 %ZDT1 - First test problem from Deb
 
+nvar = length(X);
 F1 = X(1);
 
 g = 1+(9/(nvar-1))*sum(X(2:end));

@@ -51,7 +51,7 @@ options = optimoptions(@ga,'PopulationSize',C);
 Obj_fcn = @(X) fitFCN2(X,problem_function,V);
 for gen = 1:nRun
     [X] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
-    [optF(gen,:)] = (X);
+    [optF(gen,:)] = problem_function(X);
     %func = optF(gen,:);
     optX(gen,:) = X;
 end

@@ -1,4 +1,5 @@
 options = optimoptions(@gamultiobj,'PopulationSize',50000,'PlotFcn',@gaplotpareto);
+
 nvars = 30;
 A = []; 
 b = [];

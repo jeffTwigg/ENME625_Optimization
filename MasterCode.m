@@ -3,7 +3,7 @@ clear all;
 clc;
 warning off
 
-global V nvar pop prob w1 w2
+global func V nvar
 prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n';
 prob = input(prompt);
 prompt2 = 'How Many Chromosomes? Suggest 10-20 ';
@@ -40,23 +40,18 @@ hold on
 
 Pareto = [];
 options = optimoptions(@ga,'PopulationSize',C);
-Obj_fcn = @fitFCN3;
-optF_all=[];optX_all=[];
-for w1 =0:0.1:1
-    w2 = 1-w1;
-    for gen = 1:nRun
-        [X] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
-        [optF(gen,:)] = ZDT1(X);
-        optX(gen,:) = X;
-    end
-    optF_all = [optF_all; optF];
-    optX_all = [optX_all; optX];
+Obj_fcn = @fitFCN2;
+for gen = 1:nRun
+    [X] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
+    [optF(gen,:)] = ZDT1(X);
+    func = optF(gen,:);
+    optX(gen,:) = X;
 end
-[P,~] = prtp(optF_all);
+[P,~] = prtp(optF);
 Pareto = [Pareto;P];
 
 plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10)
-% plot(optF_all(:,1),optF_all(:,2),'r*','LineWidth',2)
+plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
 hold on; grid on;
 xlabel('f_1'); ylabel('f_2')
 
@@ -89,10 +84,11 @@ hold on
 
 Pareto = [];
 options = optimoptions(@ga,'PopulationSize',C);
-Obj_fcn = @fitFCN3;
+Obj_fcn = @fitFCN2;
 for gen = 1:nRun
     [X] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
     [optF(gen,:)] = ZDT2(X);
+    func = optF(gen,:);
     optX(gen,:) = X;
 end
 [P,~] = prtp(optF);
@@ -132,11 +128,11 @@ hold on; grid on;
 
 Pareto = [];
 options = optimoptions(@ga,'PopulationSize',C);
-Obj_fcn = @fitFCN3;
-
+Obj_fcn = @fitFCN2;
 for gen = 1:nRun
     [X] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
     [optF(gen,:)] = ZDT3(X);
+    func = optF(gen,:);
     optX(gen,:) = X;
 end
 [P,~] = prtp(optF);

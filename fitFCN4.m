@@ -24,15 +24,14 @@ func(:,level_col) = 0;
 %
 while ~isempty(P_temp)
     level = level+1;% increment the level value
-    %Not neccesary because exiting in this case
     if length(P_temp(:,1))== 1
+        %If there is only one value left at the end, assign this to a level
         func(P_temp(:,nfunc+1),level_col) = level;
         break 
     end
     [~,place] = prtp(P_temp); % get all the indecies in the lowest layer
-    current_level_indecies = P_temp(place,nfunc+1);
-    %current_level_indecies = sum(P_temp(:,nfunc+1) == place,2)==1;
-    func(current_level_indecies, level_col) = level;
+    current_level_indecies = P_temp(place,nfunc+1); %map them from
+    func(current_level_indecies, level_col) = level; % assiged from prtp
     P_temp(place, :) = [];
 end
 
@@ -98,7 +97,9 @@ for k = 1:numLayer
     F_min = min(Fit_share);
 end
 %Since a greater fitness value is a larger number, we use the inverse
-fit = 10*func(end,level_col) -func(end,sim_col);
+
+% Shared Fitness function here
+fit = 10*func(end,level_col) -func(end,sim_col);% This is a hack
 end
     
     

@@ -98,7 +98,7 @@ for k = 1:numLayer
     F_min = min(Fit_share);
 end
 %Since a greater fitness value is a larger number, we use the inverse
-fit =  10*func(end,level_col)-func(end,sim_col);
+fit = 10*func(end,level_col) -func(end,sim_col);
 end
     
     

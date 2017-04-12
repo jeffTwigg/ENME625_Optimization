@@ -11,7 +11,7 @@ nChrome = input(prompt2);
 prompt3 = 'How Many Runs? Suggest >30: ';
 nRun = input(prompt3);
 %%
-prob=1; nChrome = 1; nRun = 40;
+%prob=1; nChrome = 1; nRun = 40;
 
 
 

@@ -89,7 +89,9 @@ for k = 1:numLayer
     F_min = min(Fit_share);
 end
 
-fit = func(:,nfunc+2);
+
+
+fit =  func(:,nfunc+2);
 end
     
     

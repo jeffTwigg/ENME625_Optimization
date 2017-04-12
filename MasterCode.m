@@ -10,6 +10,11 @@ prompt2 = 'How Many Chromosomes? Suggest 10-20 ';
 nChrome = input(prompt2);
 prompt3 = 'How Many Runs? Suggest >30: ';
 nRun = input(prompt3);
+%%
+prob=1; nChrome = 1; nRun = 40;
+
+
+
 % ZD-func is our problem function
 switch prob
     case 1
@@ -40,16 +45,17 @@ for k = 1:C
 end
 options = optimoptions(@gamultiobj,'InitialPopulationMatrix',pop);
 [Xmoga,Fmoga] = gamultiobj(problem_function,nvar,A,b,Aeq,beq,LB,UB,[],options);
-
-figure
+figure(1)
 plot(Fmoga(:,1),Fmoga(:,2),'bo','LineWidth',2);
 hold on
 
 
 Pareto = [];
 options = optimoptions(@ga,'PopulationSize',C);
-Obj_fcn = @(X) fitFCN2(X,problem_function,V);
+optF =[];
 for gen = 1:nRun
+    Obj_fcn = @(X) fitFCN4(X,problem_function,V,optF);
+    %Obj_fcn = @(X) fitFCN2(X,problem_function,V);
     [X] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
     [optF(gen,:)] = problem_function(X);
     %func = optF(gen,:);

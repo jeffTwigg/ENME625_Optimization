@@ -16,7 +16,9 @@ func = [existing_points;ZD_func(X)];
 [nvar,nfunc] = size(func);
 level = 0;
 level_col = nfunc +2;
-sim_col = nfunc+3;
+nc_col = nfunc + 3;
+init_fit_col = nfunc + 4;
+sim_col = nfunc+5;
 indecies = [1:nvar]';
 func = [func,indecies]; %We need to know indecies later so this should save time
 P_temp = func;
@@ -52,14 +54,16 @@ numLayer = level;
 %Assess similarity layer-by-layer, assess in objective space.
 sigma = 0.75;
 epsilon = 0.25;
-alpha = 5;
-
+alpha = 1;
+var_rem = 0;
 F_min = nvar+epsilon;
 for k = 1:numLayer
     Fitness = []; incl = [];
- 
+    
+    F_min = length(func(:,1))+epsilon-var_rem;
     incl = find(func(:,level_col)==k);
     Fitness = func(incl,:);
+    var_rem = var_rem+length(Fitness(:,1));
     if(isempty(Fitness) == 0)
         if length(incl) == 1
             d = 0;
@@ -68,10 +72,13 @@ for k = 1:numLayer
             Fit_share = (F_min-epsilon)/nc;
             F_min = min(Fit_share);
             func(incl,sim_col) = Fit_share;
+            func(incl,nc_col) = nc;
+            func(incl,init_fit_col) = minF(m);
         else
             for m = 1:nfunc
                 maxF(m) = max(Fitness(:,m));
                 minF(m) = min(Fitness(:,m));
+                func(m,init_fit_col) = minF(m);
             end
             d = []; similar = [];
             for i = 1:length(incl)
@@ -88,8 +95,9 @@ for k = 1:numLayer
                 end
                 nc(i) = sum(sh(i,:));
                 Fit_share(i) = F_int/nc(i);
-                
+                func(incl(i),nc_col) = nc(i);
                 func(incl(i),sim_col) = Fit_share(i);
+                func(incl(i),sim_col+1) = F_int;
                 
             end
         end

@@ -2,11 +2,11 @@
 
 
 
-new_point = [6  1];
-
-
-
-existing_points=[ 3 22 ; 1 14 ; 4 15  ;5 5 ; 2 20];
+%new_point = [6  2];
+%existing_points=[ 3 22 ; 1 14 ; 4 15  ;5 5 ; 2 20];
+%
+new_point = [3 22];
+existing_points = [ 1 14;5 5; 6 2; 4 15;2 20]
 
 V= 30;
 

@@ -29,7 +29,7 @@ while ~isempty(P_temp)
         func(P_temp(:,nfunc+1),level_col) = level;
         break 
     end
-    [~,place] = prtp(P_temp); % get all the indecies in the lowest layer
+    [~,place] = prtp(P_temp(:,1:nfunc)); % get all the indecies in the lowest layer
     current_level_indecies = P_temp(place,nfunc+1); %map them from
     func(current_level_indecies, level_col) = level; % assiged from prtp
     P_temp(place, :) = [];
@@ -99,7 +99,7 @@ end
 %Since a greater fitness value is a larger number, we use the inverse
 
 % Shared Fitness function here
-fit = 10*func(end,level_col) -func(end,sim_col);% This is a hack
+fit = func(end,sim_col);%10*func(end,level_col) -func(end,sim_col);% This is a hack
 end
     
     

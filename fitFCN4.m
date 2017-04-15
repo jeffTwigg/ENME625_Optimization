@@ -57,12 +57,12 @@ epsilon = 0.25;
 alpha = 1;
 var_rem = 0;
 F_min = nvar+epsilon;
-for k = 1:numLayer
+for layer = 1:numLayer
     Fitness = []; incl = [];
     
     F_min = length(func(:,1))+epsilon-var_rem;
-    incl = find(func(:,level_col)==k);
-    Fitness = func(incl,:);
+    incl = find(func(:,level_col)==layer);
+    Fitness = func(incl,1:nfunc);
     var_rem = var_rem+length(Fitness(:,1));
     if(isempty(Fitness) == 0)
         if length(incl) == 1
@@ -73,7 +73,7 @@ for k = 1:numLayer
             F_min = min(Fit_share);
             func(incl,sim_col) = Fit_share;
             func(incl,nc_col) = nc;
-            func(incl,init_fit_col) = minF(m);
+            %func(incl,init_fit_col) = minF(m);
         else
             for m = 1:nfunc
                 maxF(m) = max(Fitness(:,m));
@@ -97,7 +97,7 @@ for k = 1:numLayer
                 Fit_share(i) = F_int/nc(i);
                 func(incl(i),nc_col) = nc(i);
                 func(incl(i),sim_col) = Fit_share(i);
-                func(incl(i),sim_col+1) = F_int;
+                %func(incl(i),sim_col+1) = F_int;
                 
             end
         end
@@ -107,7 +107,7 @@ end
 %Since a greater fitness value is a larger number, we use the inverse
 
 % Shared Fitness function here
-fit = func(end,sim_col);%10*func(end,level_col) -func(end,sim_col);% This is a hack
+fit = -func(end,sim_col);%10*func(end,level_col) -func(end,sim_col);% This is a hack
 end
     
     

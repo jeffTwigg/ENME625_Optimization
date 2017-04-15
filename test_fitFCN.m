@@ -12,6 +12,6 @@ V= 30;
 
 ZD_func = @(X) X+0;
 
-[fit_value, fitness_vals] = fitFCN4(new_point, ZD_func, V,existing_points);
+[fit_value, fitness_vals] = fitFCN4_test(new_point, ZD_func, V,existing_points);
 
 plot(fitness_vals(:,1),fitness_vals(:,2),'*')

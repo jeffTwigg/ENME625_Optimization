@@ -4,7 +4,7 @@ clc;
 warning off
 %global func V 
 
-prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n';
+prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - ZDT4 \n';
 prob = input(prompt);
 prompt2 = 'How Many Chromosomes? Suggest 10-20 ';
 nChrome = input(prompt2);
@@ -19,17 +19,27 @@ nRun = input(prompt3);
 switch prob
     case 1
         problem_function = @(X) ZDT1(X);
+        LB = zeros(1,nvar); UB = ones(1,nvar);
+        nvar = 30;
     case 2 
         problem_function = @(X) ZDT2(X);
+        LB = zeros(1,nvar); UB = ones(1,nvar);
+        nvar = 30;
     case 3
         problem_function = @(X) ZDT3(X);
+        LB = zeros(1,nvar); UB = ones(1,nvar);
+        nvar = 30;
+    case 4 
+        problem_function = @(X) ZDT4(X);
+        LB = [ 0 0 1 0 1 0]; UB = [ 10 10 5 6 5 10 ]; 
+        nvar = 6;
     otherwise 
         problem_function = @(X) 0;
 end
-nvar = 30;
+
 A = []; b = [];
 Aeq = []; beq = [];
-LB = zeros(1,nvar); UB = ones(1,nvar);
+
 
 V = nvar; %Number of design variables
 C = nChrome*nvar; %Number of Chromosomes

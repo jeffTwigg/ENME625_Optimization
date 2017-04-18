@@ -1,0 +1,69 @@
+\documentclass{article}
+
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\title{Sections and Chapters}
+\author{Gubert Farnsworth}
+\date{ ENME 625: Multi-Displinary Optimization \\ 5/12/2017}
+ 
+\begin{document}
+ 
+\maketitle
+
+\newpage
+ 
+\tableofcontents
+ 
+\newpage 
+ 
+\section{Introduction}
+ 
+This is the first section.
+ 
+Lorem  ipsum  dolor  sit  amet,  consectetuer  adipiscing  
+elit.   Etiam  lobortisfacilisis sem.  Nullam nec mi et 
+neque pharetra sollicitudin.  Praesent imperdietmi nec ante. 
+Donec ullamcorper, felis non sodales...
+ 
+\addcontentsline{toc}{section}{Unnumbered Section}
+\section*{Unnumbered Section}
+ 
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  
+Etiam lobortis facilisissem.  Nullam nec mi et neque pharetra 
+sollicitudin.  Praesent imperdiet mi necante...
+ 
+\section{Constrained MOGA Problems}
+ 
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  
+Etiam lobortis facilisissem.  Nullam nec mi et neque pharetra 
+sollicitudin.  Praesent imperdiet mi necante...
+ 
+
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=8pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
+
+\section*{Matlab Code}
+
+\lstinputlisting{MasterCode.m}
+\lstinputlisting{fitFCN5.m}
+
+
+\end{document}

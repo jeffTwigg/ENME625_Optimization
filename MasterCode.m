@@ -1,7 +1,7 @@
-function MasterCode(prob,nChrome,nRun,save_figure);
+function MasterCode(prob,nChrome,nRun,save_figure)
 %clear all; 
 % close all;
-clc;
+%clc;
 warning off
 
 if(nargin < 1)
@@ -72,8 +72,11 @@ end
 
 Pareto = [];
 options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true);
+%options.FunctionTolerance = 0.001*options.FunctionTolerance
+
 optF =[];
 for gen = 1:nRun
+    %Obj_fcn = @(X) fitFCN8(X,problem_function,optF);
     Obj_fcn = @(X) fitFCN5(X,problem_function);
     [X,fval,exitflag,output] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
     [optF(gen,:)] = problem_function(X);

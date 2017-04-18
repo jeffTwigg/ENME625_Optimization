@@ -125,8 +125,10 @@ if nconstr == 0 && nconstr_lin ==0
 %% Constraint Handling
 else
     Cmax = 1.2; Cmin = 0.8; r = 0.8*M; 
-    CF1 = 0.0005+(0.015-0.0005)*rand;
-    CF2 = 0.0005+(0.015-0.0005)*rand;
+    %CF1 = 0.0005+(0.015-0.0005)*rand;
+    %CF2 = 0.0005+(0.015-0.0005)*rand;
+    CF1 = 0.01;
+    CF2 = 0.01;
     rank = zeros(1,M);
     
     % Assign moderate rank to all feasible solutions

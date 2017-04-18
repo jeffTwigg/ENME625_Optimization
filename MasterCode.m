@@ -1,4 +1,4 @@
-function MasterCode(prob,nChrome,nRun,save_figures);
+function MasterCode(prob,nChrome,nRun,save_figure);
 %clear all; 
 % close all;
 clc;
@@ -18,7 +18,7 @@ if nargin <3
 end
 if nargin <4
     prompt4 = 'Autosave figures [ 1 or 0 ]?';
-    save_figures=input(prompt4);
+    save_figure=input(prompt4);
 end
 
 %%
@@ -91,9 +91,14 @@ nfunc = optF(1,end-2);
 
 figure
 hold on;
-plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10)
+plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10);
 plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
 hold on; grid on;
 xlabel('f_1'); ylabel('f_2')
-
+handle = gcf;
+if save_figure == 1
+    dir_val = pwd;
+    saveFigure(handle,[dir_val,dir_val(1),num2str(prob),'_',num2str(nChrome,'%03.0f'),'_',num2str(nRun,'%04.0f')]);
+    print([dir_val,dir_val(1),num2str(prob),'_',num2str(nChrome,'%03.0f'),'_',num2str(nRun,'%04.0f'),'.png'],'-dpng');
+end
 

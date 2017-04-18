@@ -1,15 +1,26 @@
-clear all; 
+function MasterCode(prob,nChrome,nRun,save_figures);
+%clear all; 
 % close all;
 clc;
 warning off
 
+if(nargin < 1)
+    prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n';
+    prob = input(prompt);
+end
+if nargin <2
+    prompt2 = 'How Many Chromosomes? Suggest 20-30 ';
+    nChrome = input(prompt2);
+end
+if nargin <3
+    prompt3 = 'How Many Runs? Suggest >40: ';
+    nRun = input(prompt3);
+end
+if nargin <4
+    prompt4 = 'Autosave figures [ 1 or 0 ]?';
+    save_figures=input(prompt4);
+end
 
-prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n';
-prob = input(prompt);
-prompt2 = 'How Many Chromosomes? Suggest 20-30 ';
-nChrome = input(prompt2);
-prompt3 = 'How Many Runs? Suggest >40: ';
-nRun = input(prompt3);
 %%
 %prob=1; nChrome = 1; nRun = 40;
 
@@ -29,6 +40,12 @@ switch prob
     case 4
         problem_function = @(X) OSY(X);
         nvar = 6; LB = [0,0,1,0,1,0]; UB = [10,10,5,6,5,10];
+    case 5 
+        problem_function = @(X) TNK(X);
+        nvar = 2; LB = [0,0]; UB=[pi,pi];
+    case 6
+        problem_function = @(X) CTP(X);
+        nvar = 10; LB = -5*ones(1,10); UB = 5*ones(1,10); LB(1,1) = 0; UB(1,1) = 1;
     otherwise 
         problem_function = @(X) 0;
 end

@@ -1,2 +1,9 @@
 *.pptx#
 *.m~
+*.aux
+*.bbl
+*.log
+*.toc
+*.gz
+*.log
+*.blg

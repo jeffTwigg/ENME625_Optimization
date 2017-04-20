@@ -1,11 +1,16 @@
-function MasterCode(prob,nChrome,nRun,save_figure)
+function [optF]=MasterCode(prob,nChrome,nRun,save_figure,use_matlabs_moga)
+% load .mat file
+current_dir = pwd;
+file_name = [current_dir, current_dir(1),'results_and_params.mat'];
+results_and_params = load(file_name);
+
 %clear all; 
 % close all;
 %clc;
 warning off
 
 if(nargin < 1)
-    prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n';
+    prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n 5 - TNK \n 6 - CTP \n';
     prob = input(prompt);
 end
 if nargin <2
@@ -20,55 +25,64 @@ if nargin <4
     prompt4 = 'Autosave figures [ 1 or 0 ]?';
     save_figure=input(prompt4);
 end
+if nargin <5
+    prompt5 = 'Use Matlabs MOGA [ 1 or 0 ]?';
+    use_matlabs_moga=input(prompt5);
+end
 
-%%
-%prob=1; nChrome = 1; nRun = 40;
-
-
+problem = results_and_params(prob,1);
 
 % ZD-func is our problem function
 switch prob
     case 1
         problem_function = @(X) ZDT1(X);
         nvar = 30; LB = zeros(1,nvar); UB = ones(1,nvar);
+        problem_contraints = [];
     case 2 
         problem_function = @(X) ZDT2(X);
         nvar = 30; LB = zeros(1,nvar); UB = ones(1,nvar);
+        problem_contraints = [];
     case 3
         problem_function = @(X) ZDT3(X);
         nvar = 30; LB = zeros(1,nvar); UB = ones(1,nvar);
+        problem_contraints = [];
     case 4
         problem_function = @(X) OSY(X);
         nvar = 6; LB = [0,0,1,0,1,0]; UB = [10,10,5,6,5,10];
+        problem_contraints  =@(X) OSY_constraints(X);
     case 5 
         problem_function = @(X) TNK(X);
         nvar = 2; LB = [0,0]; UB=[pi,pi];
+        problem_contraints  =@(X) TNK_constraints(X);
     case 6
         problem_function = @(X) CTP(X);
         nvar = 10; LB = -5*ones(1,10); UB = 5*ones(1,10); LB(1,1) = 0; UB(1,1) = 1;
+        problem_contraints  =@(X) CTP_constraints(X);
     otherwise 
         problem_function = @(X) 0;
 end
 
 A = []; b = []; Aeq = []; beq = [];
-V = nvar; %Number of design variables
 
-%% Initilize Population
-%Initialize the population based on the given lower and upper bounds. Use
-%MATLABs random number generator.
-pop = zeros(nChrome,nvar);
-for k = 1:nChrome
-    for j = 1:nvar
-        pop(k,j) = LB(j)+(UB(j)-LB(j))*rand;    
-    end
+if use_matlabs_moga ==1
+    % Initilize Population
+    %Initialize the population based on the given lower and upper bounds. Use
+    %MATLABs random number generator.
+    % Start with the default options
+    options = optimoptions('gamultiobj');
+    % Modify options setting
+    options = optimoptions(options,'PopulationSize', nRun);
+    options = optimoptions(options,'CrossoverFcn', @crossoverscattered);
+    options = optimoptions(options,'Display', 'final');
+    options = optimoptions(options,'PlotFcn', { @gaplotpareto });
+    options = optimoptions(options,'ParetoFraction', 0.9);
+    [~,optF] = gamultiobj(problem_function,nvar,[],[],[],[],LB,UB,problem_contraints,options);
+    %problem.prob = prob; problem.nChrome = nChrome; problem.nRun = nRun;
+    problem.matlab_optF = optF;
+    results_and_params{prob,1} = problem;
+    save('results_and_params.mat',results_and_params)
+    return
 end
-% options = optimoptions(@gamultiobj,'InitialPopulationMatrix',pop,'PopulationSize',5000);
-% % options = optimoptions(@gamultiobj,'InitialPopulationMatrix',pop);
-% [Xmoga,Fmoga] = gamultiobj(problem_function,nvar,A,b,Aeq,beq,LB,UB,[]);
-% figure
-% plot(Fmoga(:,1),Fmoga(:,2),'bo','LineWidth',2);
-% hold on
-
 
 Pareto = [];
 options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true);
@@ -100,8 +114,17 @@ hold on; grid on;
 xlabel('f_1'); ylabel('f_2')
 handle = gcf;
 if save_figure == 1
+    %Save the figures
     dir_val = pwd;
     saveFigure(handle,[dir_val,dir_val(1),num2str(prob),'_',num2str(nChrome,'%03.0f'),'_',num2str(nRun,'%04.0f')]);
     print([dir_val,dir_val(1),num2str(prob),'_',num2str(nChrome,'%03.0f'),'_',num2str(nRun,'%04.0f'),'.png'],'-dpng');
+    
+    %Save the .mat file
+    problem.prob = prob; problem.nChrome = nChrome; problem.nRun = nRun;
+    problem.alpha = alpha; problem.sigma = sigma; problem.epsilon = epsilon;
+    problem.optF = optF; problem.Pareto= Pareto;
+    results_and_params{prob,1} = problem;
+    save(file_name,results_and_params)
 end
+
 

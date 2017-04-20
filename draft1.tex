@@ -1,5 +1,7 @@
 \documentclass{article}
-
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{subfigure}
 \usepackage{listings}
 \usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
 \definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
@@ -23,23 +25,40 @@
  
 This is the first section.
  
-Lorem  ipsum  dolor  sit  amet,  consectetuer  adipiscing  
-elit.   Etiam  lobortisfacilisis sem.  Nullam nec mi et 
-neque pharetra sollicitudin.  Praesent imperdietmi nec ante. 
-Donec ullamcorper, felis non sodales...
+
  
-\addcontentsline{toc}{section}{Unnumbered Section}
-\section*{Unnumbered Section}
- 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  
-Etiam lobortis facilisissem.  Nullam nec mi et neque pharetra 
-sollicitudin.  Praesent imperdiet mi necante...
- 
+\addcontentsline{toc}{section}{Problems}
+\section*{Unconstrained MOGA Problems}
+We used this textbook \cite{deb2001multi}
+
+\subsection{ ZDT1} 
+Talk about ZDT1 here.  
+
+
 \section{Constrained MOGA Problems}
+This is a reference to Azarms constraint paper \cite{kurpati2002constraint}. %This is how references are read from the references.bib file.
  
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  
-Etiam lobortis facilisissem.  Nullam nec mi et neque pharetra 
-sollicitudin.  Praesent imperdiet mi necante...
+\subsection{TNK}
+
+Here is figure \ref{fig:TNK}.
+
+
+\begin{figure}%[tbp]
+  \centering
+  \includegraphics[width=0.50\columnwidth]{5_020_1000.png}
+  \caption{ This is TNK for 20 chromosomes and 1000 runs}
+  \label{fig:TNK}
+\end{figure}
+ 
+\vspace{-0.1in}
+\bibliographystyle{IEEEtran}
+\bibliography{references.bib}
+ 
+ 
+
+\section{Appendix}
+
+%Matlab codes starts here
  
 
 \lstset{language=Matlab,%

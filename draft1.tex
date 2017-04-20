@@ -35,6 +35,17 @@ We used this textbook \cite{deb2001multi}
 Talk about ZDT1 here.  
 
 
+\begin{align*}
+\textrm{Minimize} ~~~~~ f_1(\textbf{x}) &= X_1 \\
+\textrm{Maximize} ~~~~ f_2(\textbf{x}) &= g*h \\
+\testrm{where} ~~~~~~~~~ g &= 1+\frac{9}{(nvar-1)}.*sum_{i=2}^nvar(X_i) \\
+~~~~~~~~~ h &= 1- sqrt{\frac{f_1}{g}} \\
+~~~~~~~~~ nvar &= 30 \\
+\textrm{subject to} \textbf{X} &= \textbf{X} \leq 1 \\
+\textbf{X} &= \textbf{X} \geq 0 \\
+\end{align*}
+
+
 \section{Constrained MOGA Problems}
 This is a reference to Azarms constraint paper \cite{kurpati2002constraint}. %This is how references are read from the references.bib file.
  

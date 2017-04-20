@@ -1,30 +1,29 @@
-function MasterCode(prob,nChrome,nRun,save_figure)
-%clear all; 
+clear all; 
 % close all;
-%clc;
+clc;
 warning off
 
-if(nargin < 1)
-    prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n';
-    prob = input(prompt);
-end
-if nargin <2
-    prompt2 = 'How Many Chromosomes? Suggest 20-30 ';
-    nChrome = input(prompt2);
-end
-if nargin <3
-    prompt3 = 'How Many Runs? Suggest >40: ';
-    nRun = input(prompt3);
-end
-if nargin <4
-    prompt4 = 'Autosave figures [ 1 or 0 ]?';
-    save_figure=input(prompt4);
-end
+global alpha sigma epsilon
 
+prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n';
+prob = input(prompt);
+prompt2 = 'How Many Chromosomes? Suggest 10-20 times #variables: ';
+nChrome = input(prompt2);
+prompt3 = 'How Many Runs? Suggest >40: ';
+nRun = input(prompt3);
+prompt4 = 'What value for alpha? ';
+alpha = input(prompt4);
+prompt5 = 'What value for sigma? (Nominal 0.158) ';
+sigma = input(prompt5);
+prompt6 = 'What value for epsilon? (Nominal 0.22) ';
+epsilon = input(prompt6);
 %%
 %prob=1; nChrome = 1; nRun = 40;
 
-
+% for prob = 2:4
+%     clearvars -except prob;
+%     nChrome = 30;
+%     nRun = 2000;
 
 % ZD-func is our problem function
 switch prob
@@ -40,12 +39,6 @@ switch prob
     case 4
         problem_function = @(X) OSY(X);
         nvar = 6; LB = [0,0,1,0,1,0]; UB = [10,10,5,6,5,10];
-    case 5 
-        problem_function = @(X) TNK(X);
-        nvar = 2; LB = [0,0]; UB=[pi,pi];
-    case 6
-        problem_function = @(X) CTP(X);
-        nvar = 10; LB = -5*ones(1,10); UB = 5*ones(1,10); LB(1,1) = 0; UB(1,1) = 1;
     otherwise 
         problem_function = @(X) 0;
 end
@@ -62,21 +55,18 @@ for k = 1:nChrome
         pop(k,j) = LB(j)+(UB(j)-LB(j))*rand;    
     end
 end
-% options = optimoptions(@gamultiobj,'InitialPopulationMatrix',pop,'PopulationSize',5000);
-% % options = optimoptions(@gamultiobj,'InitialPopulationMatrix',pop);
-% [Xmoga,Fmoga] = gamultiobj(problem_function,nvar,A,b,Aeq,beq,LB,UB,[]);
-% figure
-% plot(Fmoga(:,1),Fmoga(:,2),'bo','LineWidth',2);
-% hold on
+options = optimoptions(@gamultiobj,'InitialPopulationMatrix',pop);
+% options = optimoptions(@gamultiobj,'InitialPopulationMatrix',pop);
+[Xmoga,Fmoga] = gamultiobj(problem_function,nvar,A,b,Aeq,beq,LB,UB,[],options);
+figure
+plot(Fmoga(:,1),Fmoga(:,2),'bo','LineWidth',2);
+hold on
 
 
 Pareto = [];
-options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true);
-%options.FunctionTolerance = 0.001*options.FunctionTolerance
-
+options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true,'CrossoverFraction', 0.90);
 optF =[];
 for gen = 1:nRun
-    %Obj_fcn = @(X) fitFCN8(X,problem_function,optF);
     Obj_fcn = @(X) fitFCN5(X,problem_function);
     [X,fval,exitflag,output] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
     [optF(gen,:)] = problem_function(X);
@@ -92,16 +82,14 @@ nfunc = optF(1,end-2);
         end
     end     
 
-figure
+% figure
 hold on;
-plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10);
-plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
+plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10)
+% plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
 hold on; grid on;
 xlabel('f_1'); ylabel('f_2')
-handle = gcf;
-if save_figure == 1
-    dir_val = pwd;
-    saveFigure(handle,[dir_val,dir_val(1),num2str(prob),'_',num2str(nChrome,'%03.0f'),'_',num2str(nRun,'%04.0f')]);
-    print([dir_val,dir_val(1),num2str(prob),'_',num2str(nChrome,'%03.0f'),'_',num2str(nRun,'%04.0f'),'.png'],'-dpng');
-end
+
+save(['ZDT',num2str(prob),'_Nchr',num2str(nChrome),'run',num2str(nRun),'alp',num2str(alpha,2),'epsi',num2str(epsilon,3),'sig',num2str(sigma,3)])
+% save(['ZDT',num2str(prob),'_chrome',num2str(nChrome),'run',num2str(nRun),'alpha1_5'])
+% end
 

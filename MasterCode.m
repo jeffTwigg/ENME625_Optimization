@@ -1,7 +1,8 @@
 function [optX,optF]=MasterCode(prob,nChrome,nRun,alpha_,sigma_,epsilon_,save_figure,use_matlabs_moga)
 % load .mat file
 current_dir = pwd;
-file_name = [current_dir, current_dir(1),'results_and_params.mat'];
+file_name = 'results_and_params.mat';
+%file_name = [current_dir, current_dir(1),'results_and_params.mat'];
 results_and_params = load(file_name);
 results_and_params = results_and_params.results_and_params;
 global alpha sigma epsilon

@@ -17,7 +17,8 @@ constraint = right_ineq-left_ineq;
 nfunc = 2*ones(length(X(:,1)),1);
 nconstr = 1*ones(length(X(:,1)),1);
 nconstr_lin = 0*ones(length(X(:,1)),1);
+UNCT = 0*ones(length(X(:,1)),1);
 
-f = [f1,f2,constraint,nfunc,nconstr,nconstr_lin];
+f = [f1,f2,constraint,nfunc,nconstr,nconstr_lin,UNCT];
 
 end

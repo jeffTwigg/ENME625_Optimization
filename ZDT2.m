@@ -10,8 +10,9 @@ F2 = g.*h;
 nfunc = 2*ones(length(X(:,1)),1);
 nconstr = 0*ones(length(X(:,1)),1);
 nconstr_lin = 0*ones(length(X(:,1)),1);
+UNCT = 0*ones(length(X(:,1)),1);
 
-f = [F1,F2,nfunc,nconstr,nconstr_lin];
+f = [F1,F2,nfunc,nconstr,nconstr_lin,UNCT];
 
 
 end

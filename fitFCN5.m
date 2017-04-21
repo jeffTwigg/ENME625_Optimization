@@ -15,10 +15,13 @@ func = ZD_func(X);
 % Modify existing code to find Pareto points to find dominant layers
 
 % func = [existing_points;ZD_func(X)];
-nfunc = func(1,end-2);
-nconstr = func(1,end-1);
+
+XOLin = X;
+UNCT = func(1,end);
+nfunc = func(1,end-3);
+nconstr = func(1,end-2);
 g = func(:,nfunc+1:nfunc+nconstr);
-nconstr_lin = func(1,end);
+nconstr_lin = func(1,end-1);
 h = func(:,nfunc+nconstr+1:nfunc+nconstr+nconstr_lin);
 func = func(:,1:nfunc);
 
@@ -146,6 +149,27 @@ else
         end
      end
     
+     %Evaluates feasible solutions with uncertaintly applied in problems with
+    %uncertainy
+     if UNCT == 1
+         for k = 1:M
+             if rank(k) == 0.5*M
+                 options = optimoptions(@ga,'PopulationSize',10,'UseVectorized',true);
+                 lb = -2; ub = 2;
+                 fitnessfn = @(DP) TNK_NEGCN(XOLin(k,:),DP);
+                 [DP,fval] = ga(fitnessfn,1,[],[],[],[],lb,ub,[],options);
+                 Constval = fval;
+                 if Constval > 0
+                     rank(k) = 0;
+                 else
+                     rank(k) = 0.5*M;
+                 end
+             else
+                 rank(k) = 0;
+             end
+         end        
+     end 
+     
      % Collect together feasible population
      feas_pop = []; infeas_pop = []; m = 1;
      for k = 1:M

@@ -15,8 +15,9 @@ g6 = 1 - ((X(:,5)-3).^2 +X(:,6))./4;
 nfunc = 2*ones(length(X(:,1)),1);
 nconstr = 6*ones(length(X(:,1)),1);
 nconstr_lin = 0*ones(length(X(:,1)),1);
+UNCT = 0*ones(length(X(:,1)),1);
 
-f = [F1,F2,g1,g2,g3,g4,g5,g6,nfunc,nconstr,nconstr_lin];
+f = [F1,F2,g1,g2,g3,g4,g5,g6,nfunc,nconstr,nconstr_lin,UNCT];
 
 end
 

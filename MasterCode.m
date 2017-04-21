@@ -1,13 +1,10 @@
-function [optF]=MasterCode(prob,nChrome,nRun,save_figure,use_matlabs_moga)
+function [optX,optF]=MasterCode(prob,nChrome,nRun,alpha_,sigma_,epsilon_,save_figure,use_matlabs_moga)
 % load .mat file
 current_dir = pwd;
 file_name = [current_dir, current_dir(1),'results_and_params.mat'];
 results_and_params = load(file_name);
-
-%clear all; 
-% close all;
-%clc;
-warning off
+results_and_params = results_and_params.results_and_params;
+global alpha sigma epsilon
 
 if(nargin < 1)
     prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n 5 - TNK \n 6 - CTP \n';
@@ -21,97 +18,114 @@ if nargin <3
     prompt3 = 'How Many Runs? Suggest >40: ';
     nRun = input(prompt3);
 end
-if nargin <4
-    prompt4 = 'Autosave figures [ 1 or 0 ]?';
-    save_figure=input(prompt4);
+if nargin < 4
+    prompt4 = 'What value for alpha? ';
+    alpha = input(prompt4);
+else
+    alpha = alpha_;
 end
-if nargin <5
-    prompt5 = 'Use Matlabs MOGA [ 1 or 0 ]?';
-    use_matlabs_moga=input(prompt5);
+if nargin < 5
+    prompt5 = 'What value for sigma? (Nominal 0.158) ';
+    sigma = input(prompt5);
+else
+    sigma = sigma_;
+end
+if nargin < 6
+    prompt6 = 'What value for epsilon? (Nominal 0.22) ';
+    epsilon = input(prompt6);
+else
+    epsilon = epsilon_;
+end
+if nargin <7
+    prompt7 = 'Autosave figures [ 1 or 0 ]?';
+    save_figure=input(prompt7);
+end
+if nargin <8
+    prompt8 = 'Use Matlabs MOGA [ 1 or 0 ]?';
+    use_matlabs_moga=input(prompt8);
 end
 
-problem = results_and_params(prob,1);
+problem = results_and_params{prob,1};
 
 % ZD-func is our problem function
 switch prob
     case 1
         problem_function = @(X) ZDT1(X);
         nvar = 30; LB = zeros(1,nvar); UB = ones(1,nvar);
-        problem_contraints = [];
+        problem_constraints = [];
     case 2 
         problem_function = @(X) ZDT2(X);
         nvar = 30; LB = zeros(1,nvar); UB = ones(1,nvar);
-        problem_contraints = [];
+        problem_constraints = [];
     case 3
         problem_function = @(X) ZDT3(X);
         nvar = 30; LB = zeros(1,nvar); UB = ones(1,nvar);
-        problem_contraints = [];
+        problem_constraints = [];
     case 4
         problem_function = @(X) OSY(X);
         nvar = 6; LB = [0,0,1,0,1,0]; UB = [10,10,5,6,5,10];
-        problem_contraints  =@(X) OSY_constraints(X);
+        problem_constraints = @OSY_constraints; % Only used in matlab test
     case 5 
         problem_function = @(X) TNK(X);
         nvar = 2; LB = [0,0]; UB=[pi,pi];
-        problem_contraints  =@(X) TNK_constraints(X);
+        problem_constraints = @TNK_constraints; % Only used in matlab test
+
     case 6
         problem_function = @(X) CTP(X);
         nvar = 10; LB = -5*ones(1,10); UB = 5*ones(1,10); LB(1,1) = 0; UB(1,1) = 1;
-        problem_contraints  =@(X) CTP_constraints(X);
+        problem_constraints = @CTP_constraints; % Only used in matlab test
+
     otherwise 
         problem_function = @(X) 0;
 end
 
 A = []; b = []; Aeq = []; beq = [];
-
 if use_matlabs_moga ==1
-    % Initilize Population
-    %Initialize the population based on the given lower and upper bounds. Use
-    %MATLABs random number generator.
-    % Start with the default options
-    options = optimoptions('gamultiobj');
     % Modify options setting
+    options = optimoptions('gamultiobj');
     options = optimoptions(options,'PopulationSize', nRun);
     options = optimoptions(options,'CrossoverFcn', @crossoverscattered);
     options = optimoptions(options,'Display', 'final');
     options = optimoptions(options,'PlotFcn', { @gaplotpareto });
     options = optimoptions(options,'ParetoFraction', 0.9);
-    [~,optF] = gamultiobj(problem_function,nvar,[],[],[],[],LB,UB,problem_contraints,options);
+    indexat = @(expr, index) expr(index);
+    problem_function = @(X) indexat(problem_function(X), 1:2);
+    [~,optF] = gamultiobj(problem_function,nvar,[],[],[],[],LB,UB,problem_constraints,options);
     %problem.prob = prob; problem.nChrome = nChrome; problem.nRun = nRun;
     problem.matlab_optF = optF;
     results_and_params{prob,1} = problem;
-    save('results_and_params.mat',results_and_params)
+    save(file_name,'results_and_params')
     return
 end
 
 Pareto = [];
-options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true);
-%options.FunctionTolerance = 0.001*options.FunctionTolerance
-
+options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true,'CrossoverFraction', 0.90);
 optF =[];
 for gen = 1:nRun
-    %Obj_fcn = @(X) fitFCN8(X,problem_function,optF);
     Obj_fcn = @(X) fitFCN5(X,problem_function);
-    [X,fval,exitflag,output] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
+    [X,fval,~,~] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
     [optF(gen,:)] = problem_function(X);
     optX(gen,:) = X;
 end
 nfunc = optF(1,end-2);
 
- P = paretoset(optF(:,1:nfunc)); 
- m = 1;
-    for k = 1:length(P)
-        if P(k) == 1
-            Pareto(m,:) = optF(k,1:2); m = m+1;
-        end
-    end     
+P = paretoset(optF(:,1:nfunc));
+m = 1;
+for k = 1:length(P)
+    if P(k) == 1
+        Pareto(m,:) = optF(k,1:2); m = m+1;
+    end
+end
 
-figure
+% figure
 hold on;
-plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10);
-plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
+ml_optF = problem.matlab_optF;
+plot(ml_optF(:,1),ml_optF(:,2),'b*')
+plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10)
+% plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
 hold on; grid on;
 xlabel('f_1'); ylabel('f_2')
+
 handle = gcf;
 if save_figure == 1
     %Save the figures
@@ -124,7 +138,8 @@ if save_figure == 1
     problem.alpha = alpha; problem.sigma = sigma; problem.epsilon = epsilon;
     problem.optF = optF; problem.Pareto= Pareto;
     results_and_params{prob,1} = problem;
-    save(file_name,results_and_params)
+    save(file_name,'results_and_params')
 end
+%save(['ZDT',num2str(prob),'_Nchr',num2str(nChrome),'run',num2str(nRun),'alp',num2str(alpha,2),'epsi',num2str(epsilon,3),'sig',num2str(sigma,3)])
 
 

@@ -1,9 +1,9 @@
 function [optX,optF]=MasterCode(prob,nChrome,nRun,alpha_,sigma_,epsilon_,save_figure,use_matlabs_moga)
 % load .mat file
-current_dir = pwd;
-file_name = [current_dir, current_dir(1),'results_and_params.mat'];
-results_and_params = load(file_name);
-results_and_params = results_and_params.results_and_params;
+% current_dir = pwd;
+% file_name = [current_dir, current_dir(1),'results_and_params.mat'];
+% results_and_params = load(file_name);
+% results_and_params = results_and_params.results_and_params;
 global alpha sigma epsilon
 
 if(nargin < 1)
@@ -45,7 +45,7 @@ if nargin <8
     use_matlabs_moga=input(prompt8);
 end
 
-problem = results_and_params{prob,1};
+% problem = results_and_params{prob,1};
 
 % ZD-func is our problem function
 switch prob
@@ -74,7 +74,10 @@ switch prob
         problem_function = @(X) CTP(X);
         nvar = 10; LB = -5*ones(1,10); UB = 5*ones(1,10); LB(1,1) = 0; UB(1,1) = 1;
         problem_constraints = @CTP_constraints; % Only used in matlab test
-
+    case 7 
+        DP=1;
+        problem_function = @(X) TNK_Robust(X,DP);
+        nvar = 2; LB = [0,0]; UB=[pi,pi]; 
     otherwise 
         problem_function = @(X) 0;
 end

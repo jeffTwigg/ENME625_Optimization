@@ -156,8 +156,8 @@ else
              if rank(k) == 0.5*M
                  options = optimoptions(@ga,'PopulationSize',10,'UseVectorized',true);
                  lb = -2; ub = 2;
-                 fitnessfn = @(DP) TNK_NEGCN(XOLin(k,:),DP);
-                 [DP,fval] = ga(fitnessfn,1,[],[],[],[],lb,ub,[],options);
+                 fitnessfn = @(DP) -TNK_NEGCN2(XOLin(k,:),DP);
+                 [DP,fval] = ga(fitnessfn,2,[],[],[],[],lb,ub,[],options);
                  Constval = fval;
                  if Constval > 0
                      rank(k) = 0;

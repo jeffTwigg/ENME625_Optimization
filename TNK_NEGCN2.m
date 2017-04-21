@@ -1,6 +1,6 @@
 %Fitness function for innerloop GA, used to evaluate fitness of MOGA
 %results. Updated to be negative INSIDE the function.
-function [eta_gnew] = TNK_NEGCN(X,DP)
+function [eta_gnew] = TNK_NEGCN2(X,DP)
 % assuming that p_0 will not change
 g1   = 1+0.1.*cos(16.*atan2(X(1),X(2)))+0.2.*sin(1+DP(:,1)).*cos(1+DP(:,2))+X(1)^2 +X(2)^2;
 g1_o = 1+0.1.*cos(16.*atan2(X(1),X(2)))+0.2.*sin(1).*cos(1)+X(1)^2 +X(2)^2;

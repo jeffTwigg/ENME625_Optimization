@@ -133,8 +133,13 @@ end
 
 % figure
 hold on;
-ml_optF = problem.matlab_optF;
-plot(ml_optF(:,1),ml_optF(:,2),'b*')
+if isempty(problem)==false
+    if(isfield(problem,'matlab_optF'))
+        ml_optF = problem.matlab_optF;
+        plot(ml_optF(:,1),ml_optF(:,2),'b*')
+    end
+end
+
 if(isempty(Pareto) == false)
     plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10)
 end

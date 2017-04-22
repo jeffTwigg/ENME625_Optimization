@@ -1,8 +1,37 @@
-function [ fit ] = fitFCN5(X, ZD_func)
+function [ fit ] = fitFCN5(X, ZD_func,robust_constraint_fitness)
 %NSGA algorithm. Use Approach 1 for sorting
-
 global alpha sigma epsilon
-func = ZD_func(X);
+
+cheat = 1;
+
+if nargin < 3
+    robust_constraint_fitness = [];
+end
+
+%Check is this is a robust problem
+delta_P = [];
+if isempty(robust_constraint_fitness)
+    func = ZD_func(X);
+else%Evaluates feasible solutions with uncertaintly applied in problems with
+%uncertainy
+    if cheat ==1
+        delta_P = [0.5708*ones(length(X),1),-1*ones(length(X),1)];
+    else
+        [M,~] = size(X);
+        for k = 1:M
+            options = optimoptions(@ga,'PopulationSize',10,'UseVectorized',true);
+            lb = [-2,-2]; ub = [2,2];
+            fitnessfn = @(DP) -TNK_NEGCN2(X(k,:),DP);
+            [d_p,~] = ga(fitnessfn,2,[],[],[],[],lb,ub,[],options);
+            delta_P = [delta_P ; d_p];
+        end
+    end
+    func = ZD_func(X,delta_P);
+end
+
+
+
+
 
 % 
 % if isempty(existing_points)
@@ -16,12 +45,13 @@ func = ZD_func(X);
 
 % func = [existing_points;ZD_func(X)];
 
-XOLin = X;
-UNCT = func(1,end);
 nfunc = func(1,end-3);
 nconstr = func(1,end-2);
 g = func(:,nfunc+1:nfunc+nconstr);
 nconstr_lin = func(1,end-1);
+if nconstr_lin > 0
+    fprintf('weird error here')
+end
 h = func(:,nfunc+nconstr+1:nfunc+nconstr+nconstr_lin);
 func = func(:,1:nfunc);
 
@@ -149,26 +179,7 @@ else
         end
      end
     
-     %Evaluates feasible solutions with uncertaintly applied in problems with
-    %uncertainy
-     if UNCT == 1
-         for k = 1:M
-             if rank(k) == 0.5*M
-                 options = optimoptions(@ga,'PopulationSize',10,'UseVectorized',true);
-                 lb = -2; ub = 2;
-                 fitnessfn = @(DP) -TNK_NEGCN2(XOLin(k,:),DP);
-                 [DP,fval] = ga(fitnessfn,2,[],[],[],[],lb,ub,[],options);
-                 Constval = fval;
-                 if Constval > 0
-                     rank(k) = 0;
-                 else
-                     rank(k) = 0.5*M;
-                 end
-             else
-                 rank(k) = 0;
-             end
-         end        
-     end 
+
      
      % Collect together feasible population
      feas_pop = []; infeas_pop = []; m = 1;

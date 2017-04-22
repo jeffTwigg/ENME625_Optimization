@@ -87,8 +87,9 @@ switch prob
         problem_constraints = @CTP_constraints; % Only used in matlab test
     case 7 
         DP=1;
-        problem_function = @(X) TNK_Robust(X,DP);
-        nvar = 2; LB = [0,0]; UB=[pi,pi]; 
+        problem_function = @(X,DP) TNK_Robust(X,DP);
+        nvar = 2; LB = [0,0]; UB=[pi,pi];
+        robust_fitness = @(X,DP) TNK_NEGCN2(X,DP);
     otherwise 
         problem_function = @(X) 0;
 end
@@ -117,11 +118,16 @@ options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true,'Crosso
 optF =[];
 for gen = 1:nRun
     Obj_fcn = @(X) fitFCN5(X,problem_function);
-    [X,fval,~,~] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
-    [optF(gen,:)] = problem_function(X);
+    if(prob==7);Obj_fcn = @(X) fitFCN5(X,problem_function,robust_fitness);end
+    [X,~,~,~] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
+    if(prob==7)
+        [optF(gen,:)] = problem_function(X,[0,0]);
+    else
+        [optF(gen,:)] = problem_function(X);
+    end
     optX(gen,:) = X;
 end
-nfunc = optF(1,end-2);
+nfunc = 2; % Making this static because it will not change in this project
 
 P = paretoset(optF(:,1:nfunc));
 m = 1;
@@ -143,7 +149,7 @@ end
 if(isempty(Pareto) == false)
     plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10)
 end
-% plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
+ plot(optF(:,1),optF(:,2),'r*','LineWidth',2)
 hold on; grid on;
 xlabel('f_1'); ylabel('f_2')
 

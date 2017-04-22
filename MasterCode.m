@@ -1,6 +1,6 @@
-function [optX,optF]=MasterCode(prob,nChrome,nRun,alpha_,sigma_,epsilon_,save_figure,use_matlabs_moga)
+%function [optX,optF]=MasterCode(prob,nChrome,nRun,alpha_,sigma_,epsilon_,save_figure,use_matlabs_moga)
 % load .mat file
-
+nargin=0;
 current_dir = pwd;
 %file_name = 'results_and_params.mat';
 if(contains(current_dir,'/ENME625_Optimization')) %linux or mac
@@ -18,7 +18,7 @@ results_and_params = results_and_params.results_and_params;
 global alpha sigma epsilon
 
 if(nargin < 1)
-    prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n 5 - TNK \n 6 - CTP \n';
+    prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n 5 - TNK \n 6 - CTP \n 7 - Robust TNK \n';
     prob = input(prompt);
 end
 if nargin <2

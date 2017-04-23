@@ -80,7 +80,7 @@ h_path = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
 %% Add No Fly Zone
-xc = 40; yc = 20; radius = 10;
+xc = [40,20]; yc = [5,20]; radius = [5,5];
 for i = 1:length(xc)
     t = linspace(0,2*pi);
     x_bounds = xc(i)+radius(i)*cos(t);
@@ -122,9 +122,9 @@ if(single_objective == 1)
     optimalWayPoints = fmincon(objectiveFun, ic(:), [],[],[],[],lb,ub,[],opts);
 else
     %% Find an optimal path using GAMultiobh
+    population_size = 20;
     %Define 2nd Objective Function
-    %distanceFromExclusionZone =@(P) -max(sum((P(:,1) - xc(1)).^2 +(P(:,2) -yc(1)).^2,10) );
-    distanceFromExclusionZone =@(P) 1;
+    distanceFromExclusionZone =@(P) -0.1*getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius);
     
     %Define bi-objective Function
     problem_function= @(P) [objectiveFun(P) distanceFromExclusionZone(P)];
@@ -135,24 +135,29 @@ else
     problem_constraints = []; % Removing problem constraints for now
     %Do the optimization using multiobjective optimizations
     options = optimoptions('gamultiobj');
-    options = optimoptions(options,'PopulationSize',100);
+    options = optimoptions(options,'PopulationSize',population_size);
     options = optimoptions(options,'CrossoverFcn', @crossoverscattered);
     options = optimoptions(options,'Display', 'final');
     %options = optimoptions(options,'PlotFcn', { @gaplotpareto });
     options = optimoptions(options,'ParetoFraction', 0.9);
     [X,FVAL,EXITFLAG,OUTPUT,POPULATION,SCORE] = gamultiobj(problem_function,length(ic),[],[],[],[],lb,ub,problem_constraints,options);
-    optimalWayPoints = X;
 end
 
 %% Plot the optimal solution:
 delete([h_wp h_path]);
-optimalWayPoints = [0 sizeY/2; reshape(optimalWayPoints,2,[])'; sizeX sizeY/2];
-
-xWayPoints = optimalWayPoints(:,1);
-yWayPoints = optimalWayPoints(:,2);
-h_wp = plot(xWayPoints,yWayPoints,'color','k','linestyle','none','marker','.','markersize',16);
-
-PathPoints = WayPoints_To_Path([xWayPoints,yWayPoints],'PCHIP',sizeX,sizeY,101);
-h_path = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
+[population_size,~] = size(X);
+for i= i:population_size
+    optimalWayPoints = X(i,:);
+    optimalWayPoints = [0 sizeY/2; reshape(optimalWayPoints,2,[])'; sizeX sizeY/2];
+    xWayPoints = optimalWayPoints(:,1);
+    yWayPoints = optimalWayPoints(:,2);
+    h_wp(i) = plot(xWayPoints,yWayPoints,'color','k','linestyle','none','marker','.','markersize',16);
+    PathPoints = WayPoints_To_Path([xWayPoints,yWayPoints],'PCHIP',sizeX,sizeY,101);
+    h_path(i) = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
+end
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Optimal Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
+
+plot(FVAL(:,1),10*FVAL(:,2),'g^')
+xlabel('Flight Time')
+ylabel('Closest Point to Exclusion Zone')

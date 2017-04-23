@@ -19,6 +19,7 @@ rng(50);
 
 W_x = makeWindFun(sizeX,sizeY);
 W_y = makeWindFun(sizeX,sizeY);
+clf(figure(1))
 figure(1)
 [Xgrid,Ygrid] = meshgrid(0:sizeX,0:sizeY);
 hq = quiver(Xgrid,Ygrid,W_x,W_y,'k');
@@ -80,7 +81,7 @@ h_path = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
 %% Add No Fly Zone
-xc = [40,20]; yc = [5,20]; radius = [5,5];
+xc = [5,40,20]; yc = [5,5,20]; radius = [5,10,10];  %Alter these params to get different no-fly zones
 for i = 1:length(xc)
     t = linspace(0,2*pi);
     x_bounds = xc(i)+radius(i)*cos(t);
@@ -130,9 +131,9 @@ else
     problem_function= @(P) [objectiveFun(P) distanceFromExclusionZone(P)];
 
     %Define Constraint Function
-    ineq_constraints = @(P) radius(:) -getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius) ;
-    problem_constraints = @(P) [ ineq_constraints(P),0];
-    problem_constraints = []; % Removing problem constraints for now
+    problem_constraints = @(P) flightConstraints(P,sizeX,sizeY,xc,yc,radius); 
+    %problem_constraints = []; % Removing problem constraints for now
+    
     %Do the optimization using multiobjective optimizations
     options = optimoptions('gamultiobj');
     options = optimoptions(options,'PopulationSize',population_size);

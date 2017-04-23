@@ -1,4 +1,4 @@
-function closest_dist = getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius)
+function dist = getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius)
 % Tell you how close you will get to the exclusion zone with a path.  
 
 METHOD = 'PCHIP';
@@ -9,11 +9,11 @@ if isvector(P)
     PathPoints = WayPoints_To_Path(PathPoints,METHOD,sizeX,sizeY,101);
 end
 
-squared_dist = zeros(length(radius),1);
+dist = zeros(length(radius),1);
 
 for i = 1:length(radius)
-    squared_dist(i) = min((PathPoints(:,1) - xc(i)).^2 +(PathPoints(:,2) -yc(i)).^2 );
+    dist(i) = sqrt(min((PathPoints(:,1) - xc(i)).^2 +(PathPoints(:,2) -yc(i)).^2 ));
 end
 
 
-closest_dist = sqrt(min(squared_dist));
+%closest_dist = sqrt(min(squared_dist));

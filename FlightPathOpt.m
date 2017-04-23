@@ -19,7 +19,7 @@ rng(50);
 
 W_x = makeWindFun(sizeX,sizeY);
 W_y = makeWindFun(sizeX,sizeY);
-
+figure(1)
 [Xgrid,Ygrid] = meshgrid(0:sizeX,0:sizeY);
 hq = quiver(Xgrid,Ygrid,W_x,W_y,'k');
 hold on;
@@ -124,14 +124,14 @@ else
     %% Find an optimal path using GAMultiobh
     population_size = 20;
     %Define 2nd Objective Function
-    distanceFromExclusionZone =@(P) -0.1*getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius);
+    distanceFromExclusionZone =@(P) -0.1*min(getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius));
     
     %Define bi-objective Function
     problem_function= @(P) [objectiveFun(P) distanceFromExclusionZone(P)];
 
     %Define Constraint Function
-    ineq_constraints = @(P) -sum((P(:,1) - xc(1)).^2 +(P(:,2) -yc(1)).^2 -radius(1));
-    problem_constraints = @(P) deal(ineq_constraints(P),0);
+    ineq_constraints = @(P) radius(:) -getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius) ;
+    problem_constraints = @(P) [ ineq_constraints(P),0];
     problem_constraints = []; % Removing problem constraints for now
     %Do the optimization using multiobjective optimizations
     options = optimoptions('gamultiobj');
@@ -157,7 +157,7 @@ for i= i:population_size
 end
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Optimal Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
-
+figure(2)
 plot(FVAL(:,1),10*FVAL(:,2),'g^')
 xlabel('Flight Time')
 ylabel('Closest Point to Exclusion Zone')

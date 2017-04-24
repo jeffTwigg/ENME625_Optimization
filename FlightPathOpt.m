@@ -81,7 +81,7 @@ h_path = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
 %% Add No Fly Zone
-xc = [5,40,20]; yc = [5,5,20]; radius = [5,10,10];  %Alter these params to get different no-fly zones
+xc = [40,20]; yc = [5,20]; radius = [10,10];  %Alter these params to get different no-fly zones
 for i = 1:length(xc)
     t = linspace(0,2*pi);
     x_bounds = xc(i)+radius(i)*cos(t);

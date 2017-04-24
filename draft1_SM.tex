@@ -180,7 +180,6 @@ This is a reference to Azarms constraint paper \cite{kurpati2002constraint}. %Th
 \subsection{TNK} 
 This test problem, denoted as TNK in (insert reference) is shown below with the true Pareto frontier shown in Figure~\ref{fig:TNK_true}.
 
-
 \begin{align*}
 \textrm{Minimize} ~~~~~ f_1(\textbf{x}) &= x_1 \\
 \textrm{Minimize} ~~~~~ f_2(\textbf{x}) &= x_2 \\
@@ -239,7 +238,7 @@ g(x) &= |1+(\sum_{i=2}^{10}x_i)^{0.25}| \\
   \label{fig:CTP_true}
 \end{figure}
 
-Figure~\ref{fig:CTP} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:CTP} summarizes the mean quality metrics for each algorithm for ten runs.
+Figure~\ref{fig:CTP} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:CTP} summarizes the mean quality metrics for each algorithm for ten runs \cite{deb2001multi}.
 \begin{figure}[h]
   \caption{Example Pareto Results for CTP}
   \centering
@@ -261,6 +260,35 @@ OS & 0.7901 (0.0734) & 0.5959 (0.1324) \\ \hline
  
 The mean values for coverage difference are exactly the same for both algorithms. In fact a paired t-test also shows the means are not statistically difference(p>0.05). For Pareto spread, MATLAB's MOGA performs the highest.
  
+\section{Flight Planning Problem (FPP)}
+Now let us consider the final problem where we try to minimize the total flight time from the start location $(0,12.5)$ to the finish location $(40,12.5)$.  In this problem there is a know wind velocity field which changes the total velocity of the aircraft with respect to the ground.  At the same time, we want to maximize the distance of the flight path from some group of some exclusion zones. This also introduces a constraint that requires the flight path not intersect the exclusion zone. Each exclusion zone is approximated by a circle with known centers.  The radius of each exclusion zone is known to $\pm 2m$.  As a result this problem can be approached as a bi-objective optimization with a robust feasibility constraint. 
+
+\begin{align*}
+\textrm{Minimize} ~~~~~ f_1(\textbf{x},\textbf{y}) &= flightTime(\textbf{x},\textbf{y})\\
+\textrm{Maximize} ~~~~~ f_2(\textbf{x},\textbf{y}) &= -\min_{i,j}\sqrt{(\textbf{x}_i-\textbf{xc}_j)^2 + (\textbf{y}_i-\textbf{yc}_j)^2}\\
+\textrm{Subject to} ~~~~ \textbf{g}_j(\textbf{x},\textbf{y}) &= -\min_{j}\left[\textbf{r}_j+p_0 + \Delta p -\sqrt{(\textbf{x}_i-\textbf{xc}_j)^2 + (\textbf{y}_i-\textbf{yc}_j)^2}\right]   \leq 0 \\
+\textrm{where} ~~~~~~~~~~ 
+0 &\leq  x \leq 50, i = 2,...,10 \\
+0 &\leq  y  \leq 25, i = 2,...,10 \\
+&p_0 = 0\\
+&\Delta p \in [0,2] \\
+\end{align*}
+	The function $flightTime(\textbf{x},\textbf{y})$ is a black-box. The values $\textbf{xc}_j$ and  $\textbf{yc}_j$ specify the exclusion zone centers while $\textbf{r}_j$ specify the radii. A solution to this problem is shown in figure \ref{fig:FPP}.  In this figure there are two exclusion zones.
+\begin{figure}[h]
+  \caption{True Pareto Frontier for CTP}
+  \centering
+  \includegraphics[width=0.85\textwidth]{FPP.png}  
+  \label{fig:FPP}
+\end{figure}
+	
+\begin{figure}[h]
+  \caption{True Pareto Frontier for CTP}
+  \centering
+  \includegraphics[width=0.85\textwidth]{FPP_pareto.png}  
+  \label{fig:FPP_pareto}
+\end{figure}
+
+
  
  \newpage
 \vspace{-0.1in}

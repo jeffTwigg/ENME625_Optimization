@@ -153,12 +153,12 @@ g_6(x) &= 1-\frac{(x_5-3)^2+x_6}{4} \leq 0 \\
 \end{align*}
 
 The true Pareto frontier for this problem again occurs when $x_i$ = 0 for i = 2,...,30. Figure~\ref{fig:OSY} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:OSY} summarizes the mean quality metrics for each algorithm for ten runs.
-%\begin{figure}[h]
-%  \caption{Example Pareto Results for OSY}
-%  \centering
-%  \includegraphics[width=0.85\textwidth]{OSY_pareto_final.png}  
-%  \label{fig:OSY}
-%\end{figure}
+\begin{figure}[h]
+  \caption{Example Pareto Results for OSY}
+  \centering
+  \includegraphics[width=0.85\textwidth]{OSY_pareto_final.png}  
+  \label{fig:OSY}
+\end{figure}
 
 \begin{table}[h]
 \caption{Quality Metrics for OSY} 
@@ -166,13 +166,13 @@ The true Pareto frontier for this problem again occurs when $x_i$ = 0 for i = 2,
 \begin{tabular}{|c|c|c|} 
 \hline\hline  
 Metric & MATLABs MOGA & Our MOGA \\ \hline
-CD &  &   \\ \hline
-OS &  &  \\ \hline
+CD & 0.7882 (0.1995) & 0.5507 (0.0685)  \\ \hline
+OS & 0.5322 (0.3393) & 0.9608 (0.2427) \\ \hline
 \end{tabular}
 \label{tab:OSY} 
 \end{table}
 
-
+Overall, our MOGA outperformed MATLABs MOGA in both quality metrics. However, by examining the Pareto frontiers, it is clear that neither algorithm is truely satisfactory in estimating the true Pareto frontier. 
 
 \section{Constrained MOGA Problems}
 This is a reference to Azarms constraint paper \cite{kurpati2002constraint}. %This is how references are read from the references.bib file.

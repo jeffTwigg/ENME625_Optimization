@@ -81,7 +81,7 @@ h_path = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
 %% Add No Fly Zone
-xc = [40,20]; yc = [5,20]; radius = [7,7];  %Alter these params to get different no-fly zones
+xc = [40,20]; yc = [5,20]; radius = [8.5,7.5];  %Alter these params to get different no-fly zones
 
 
 for i = 1:length(xc)
@@ -133,8 +133,9 @@ else
 
     %Define Constraint Function
     %% Maximize The feasibility constraints for robustness.
-    problem_constraints = @(P,radius) min(flightConstraints(P,sizeX,sizeY,xc,yc,radius)); 
-    delta_P = maximumDeltaP([12.5,25],radius,radius+2,problem_constraints);
+    %problem_constraints = @(P,radius) min(flightConstraints(P,sizeX,sizeY,xc,yc,radius)); 
+    %delta_P = maximumDeltaP([12.5,25],radius,radius+2,problem_constraints);
+    delta_P = 2;
     radius = radius+delta_P;
     %%
     problem_constraints = @(P) flightConstraints(P,sizeX,sizeY,xc,yc,radius); 

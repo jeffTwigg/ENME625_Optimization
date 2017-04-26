@@ -16,5 +16,5 @@ for i = 1:length(radius)
     dist(i) = sqrt(min((PathPoints(:,1) - xc(i)).^2 +(PathPoints(:,2) -yc(i)).^2 ));
 end
 
-constraints = radius' - dist;
+%constraints = radius' - dist;
 %closest_dist = sqrt(min(squared_dist));

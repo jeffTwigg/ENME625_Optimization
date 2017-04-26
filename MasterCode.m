@@ -1,6 +1,7 @@
 %function [optX,optF]=MasterCode(prob,nChrome,nRun,alpha_,sigma_,epsilon_,save_figure,use_matlabs_moga)
-% load .mat file
 nargin=0;
+
+% load .mat file
 current_dir = pwd;
 %file_name = 'results_and_params.mat';
 if(contains(current_dir,'/ENME625_Optimization')) %linux or mac
@@ -17,6 +18,7 @@ results_and_params = results_and_params.results_and_params;
 
 global alpha sigma epsilon
 
+%% helper functions 
 if(nargin < 1)
     prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n 5 - TNK \n 6 - CTP \n 7 - Robust TNK \n';
     prob = input(prompt);
@@ -75,23 +77,29 @@ switch prob
     case 4
         problem_function = @(X) OSY(X);
         nvar = 6; LB = [0,0,1,0,1,0]; UB = [10,10,5,6,5,10];
-        problem_constraints = @OSY_constraints; % Only used in matlab test
+        problem_constraints = @OSY_constraints; % Only used in matlab MOGA test
     case 5 
         problem_function = @(X) TNK(X);
         nvar = 2; LB = [0,0]; UB=[pi,pi];
-        problem_constraints = @TNK_constraints; % Only used in matlab test
+        problem_constraints = @TNK_constraints; % Only used in matlab MOGA test
 
     case 6
         problem_function = @(X) CTP(X);
         nvar = 10; LB = -5*ones(1,10); UB = 5*ones(1,10); LB(1,1) = 0; UB(1,1) = 1;
-        problem_constraints = @CTP_constraints; % Only used in matlab test
+        problem_constraints = @CTP_constraints; % Only used in matlab MOGA test
     case 7 
         DP=1;
-        problem_function = @(X,DP) TNK_Robust(X,DP);
         nvar = 2; LB = [0,0]; UB=[pi,pi];
-        robust_fitness = @(X,DP) TNK_NEGCN2(X,DP);
+        %Find Maximize DP
+        delta_P = maximumDeltaP([pi/2,pi/2],[-2,-2],[2,2],@TNK_NEGCN2);
+        problem_function = @(X) TNK_Robust(X,delta_P);
+        problem_constraint = @(X) TNK_NEGCN2(X,delta_P); 
+    case 8
+        flightPathOpt;
+        return
     otherwise 
         problem_function = @(X) 0;
+        return
 end
 
 A = []; b = []; Aeq = []; beq = [];
@@ -116,15 +124,13 @@ end
 Pareto = [];
 options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true,'CrossoverFraction', 0.90);
 optF =[];
+
+
+
 for gen = 1:nRun
     Obj_fcn = @(X) fitFCN5(X,problem_function);
-    if(prob==7);Obj_fcn = @(X) fitFCN5(X,problem_function,robust_fitness);end
     [X,~,~,~] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
-    if(prob==7)
-        [optF(gen,:)] = problem_function(X,[0,0]);
-    else
-        [optF(gen,:)] = problem_function(X);
-    end
+    [optF(gen,:)] = problem_function(X);
     optX(gen,:) = X;
 end
 nfunc = 2; % Making this static because it will not change in this project

@@ -1,37 +1,7 @@
-function [ fit ] = fitFCN5(X, ZD_func,robust_constraint_fitness)
+function [ fit ] = fitFCN5(X, ZD_func)
 %NSGA algorithm. Use Approach 1 for sorting
 global alpha sigma epsilon
-
-cheat = 1;
-
-if nargin < 3
-    robust_constraint_fitness = [];
-end
-
-%Check is this is a robust problem
-delta_P = [];
-if isempty(robust_constraint_fitness)
-    func = ZD_func(X);
-else%Evaluates feasible solutions with uncertaintly applied in problems with
-%uncertainy
-    if cheat ==1
-        delta_P = [0.5708*ones(length(X),1),-1*ones(length(X),1)];
-    else
-        [M,~] = size(X);
-        for k = 1:M
-            options = optimoptions(@ga,'PopulationSize',10,'UseVectorized',true);
-            lb = [-2,-2]; ub = [2,2];
-            fitnessfn = @(DP) -TNK_NEGCN2(X(k,:),DP);
-            [d_p,~] = ga(fitnessfn,2,[],[],[],[],lb,ub,[],options);
-            delta_P = [delta_P ; d_p];
-        end
-    end
-    func = ZD_func(X,delta_P);
-end
-
-
-
-
+func = ZD_func(X);
 
 % 
 % if isempty(existing_points)

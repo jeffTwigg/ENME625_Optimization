@@ -11,6 +11,6 @@ nconstr = 2*ones(length(X(:,1)),1);
 nconstr_lin = 0*ones(length(X(:,1)),1);
 UNCT = 0*ones(length(X(:,1)),1);
 
-f = [f1,f2,constraint,nfunc,nconstr,nconstr_lin,UNCT];
+f = [f1,f2,constraint,nfunc,nconstr,nconstr_lin];
 
 end

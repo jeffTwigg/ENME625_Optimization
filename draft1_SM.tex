@@ -265,8 +265,45 @@ OS & 0.7901 (0.0734) & 0.5959 (0.1324) \\ \hline
 \end{table} 
  
 The mean values for coverage difference are exactly the same for both algorithms. In fact a paired t-test also shows the means are not statistically difference(p>0.05). For Pareto spread, MATLAB's MOGA performs the highest.
+
+\section{Robust Problems} 
  
-\section{Flight Planning Problem (FPP)}
+\subsection{Robust TNK} 
+This test problem, denoted as TNK in (insert reference) is shown below with the true Pareto frontier shown in Figure~\ref{fig:TNK_true}.
+
+\begin{align*}
+\textrm{Minimize} ~~~~~ f_1(\textbf{x}) &= x_1 \\
+\textrm{Minimize} ~~~~~ f_2(\textbf{x}) &= x_2 \\
+\textrm{Subject to} ~~~~ g_1(x) &= 1+0.1\cos(16\arctan(\frac{x_1}{x_2})) + \\
+&~~~~ 0.2\sin{p_1}\cos{p_2} -x_1^2-x_2^2\leq 0 \\
+g_2(x) &= (x_1 - 0.5)^2 + (x_2 - 0.5)^2 -0.5 \leq 0 \\
+0 &\leq  x_1,x_2 \leq \pi \\
+-1& \leq p \leq 3\\
+\end{align*}
+
+Figure~\ref{fig:robust} shows a sample result from both MATLABs built in MOGA and the robust MOGA developed in this project. Table~\ref{tab:robustTNK} summarizes the mean quality metrics for each algorithm for ten runs.
+\begin{figure}[h]
+  \caption{Example Pareto Results for TNK}
+  \centering
+  \includegraphics[width=0.85\textwidth]{prob7_nChr25_nRun400.png}  
+  \label{fig:robustTNK}
+\end{figure}
+
+\begin{table}[h]
+\caption{Quality Metrics for TNK} 
+\centering 
+\begin{tabular}{|c|c|c|} 
+\hline\hline  
+Metric & MATLABs MOGA & Our MOGA \\ \hline
+CD &  0.8581 (0.0480) & 0.7792 (0.0036) \\ \hline
+OS & 0.4177 (0.3216) & 0.9763 (0.0178)\\ \hline
+\end{tabular}
+\label{tab:robustTNK} 
+\end{table}
+ 
+Comparing the estimated Pareto frontiers to the true Pareto frontier, is is clear that our MOGA outperforms MATLAB's MOGA. The Pareto spread in our MOGA is significantly higher however the coverage difference is higher in MATLABs MOGA (p<0.05).
+ 
+\subsection{Flight Planning Problem (FPP)}
 Now let us consider the final problem where we try to minimize the total flight time from the start location $(0,12.5)$ to the finish location $(40,12.5)$.  In this problem there is a know wind velocity field which changes the total velocity of the aircraft with respect to the ground.  At the same time, we want to maximize the distance of the flight path from some group of some exclusion zones. This also introduces a constraint that requires the flight path not intersect the exclusion zone. Each exclusion zone is approximated by a circle with known centers.  The radius of each exclusion zone is known to $\pm 2m$.  As a result this problem can be approached as a bi-objective optimization with a robust feasibility constraint. 
 
 \begin{align*}

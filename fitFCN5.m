@@ -1,6 +1,6 @@
 function [ fit ] = fitFCN5(X, ZD_func)
 %NSGA algorithm. Use Approach 1 for sorting
-global alpha sigma epsilon
+global alpha sigma epsilon CF1 CF2
 func = ZD_func(X);
 
 % 
@@ -73,9 +73,6 @@ if nconstr == 0 && nconstr_lin ==0
     %% Similarity
     %Assess similarity layer-by-layer, assess in objective space.
 
-%     sigma = 0.158;
-%     epsilon = 0.1;
-%     alpha = 1;
     var_rem = 0;
     F_min = M+epsilon;
     for k = 1:numLayer
@@ -129,8 +126,6 @@ if nconstr == 0 && nconstr_lin ==0
 %% Constraint Handling
 else
     Cmax = 1.2; Cmin = 0.8; r = 0.8*M; 
-    CF1 = 0.01;
-    CF2 = 0.01;
     rank = zeros(1,M);
     
     % Assign moderate rank to all feasible solutions

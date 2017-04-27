@@ -8,7 +8,7 @@
 %
 
 %% First make some random vector field of wind, and set parameters
-
+ function [FVAL]  = FlightPathOpt
 clear; clf;
 
 AirSpeed = 500;
@@ -81,12 +81,12 @@ h_path = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
 %% Add No Fly Zone
-xc = [40,20]; yc = [5,20]; radius = [8.5,7.5];  %Alter these params to get different no-fly zones
+xc = [40,20]; yc = [5,20]; radius = [8.3,7.5];  %Alter these params to get different no-fly zones
 
 
 for i = 1:length(xc)
-    plotFlightBounds(xc(i),yc(i),radius(i),sizeX,sizeY,'b')
-    plotFlightBounds(xc(i),yc(i),radius(i)+2,sizeX,sizeY,'b.')
+    plotFlightBounds(xc(i),yc(i),radius(i),sizeX,sizeY,'b');
+    plotFlightBounds(xc(i),yc(i),radius(i)+2,sizeX,sizeY,'b.');
 end
 
 
@@ -124,7 +124,7 @@ if(single_objective == 1)
     optimalWayPoints = fmincon(objectiveFun, ic(:), [],[],[],[],lb,ub,[],opts);
 else
     %% Find an optimal path using GAMultiobh
-    population_size = 20;
+    population_size = 100;
     %Define 2nd Objective Function
     distanceFromExclusionZone =@(P) -0.1*min(getDistanceExclustionZone(P,sizeX,sizeY,xc,yc,radius));
     
@@ -133,14 +133,17 @@ else
 
     %Define Constraint Function
     %% Maximize The feasibility constraints for robustness.
-    %problem_constraints = @(P,radius) min(flightConstraints(P,sizeX,sizeY,xc,yc,radius)); 
-    %delta_P = maximumDeltaP([12.5,25],radius,radius+2,problem_constraints);
-    delta_P = 2;
+    n_constraints = length(radius);
+    for i = 1:n_constraints
+        pop = 10;
+        constraints = @(P,r) radiusConstraint(P,sizeX,sizeY,xc(i),yc(i),r);
+        delta_P(i) = maximumDeltaP([12.5;25],radius(i),[0,2],constraints,pop);
+    end
     radius = radius+delta_P;
     %%
     problem_constraints = @(P) flightConstraints(P,sizeX,sizeY,xc,yc,radius); 
     %problem_constraints = []; % Removing problem constraints for now
-    
+    clear options
     %Do the optimization using multiobjective optimizations
     options = optimoptions('gamultiobj');
     options = optimoptions(options,'PopulationSize',population_size);
@@ -169,7 +172,7 @@ figure(2)
 plot(FVAL(:,1),10*FVAL(:,2),'g^')
 xlabel('Flight Time')
 ylabel('Closest Point to Exclusion Zone')
-
+ end
 
 function h=plotFlightBounds(xc,yc,radius,sizeX,sizeY,c)
     t = linspace(0,2*pi);

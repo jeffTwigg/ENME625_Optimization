@@ -8,9 +8,14 @@ min_f1 = min(input(:,1)); max_f1 = max(input(:,1));
 min_f2 = min(input(:,2)); max_f2 = max(input(:,2));
 if min_f1<0
     input(:,1) = input(:,1)+abs(min_f1);
+else
+    input(:,1) = input(:,1)-abs(min_f1);
 end
+    
 if min_f2<0
     input(:,2) = input(:,2)+abs(min_f2);
+else
+    input(:,2) = input(:,2)-abs(min_f2);
 end
 %normalize range
 input(:,1) = input(:,1)./(max_f1-abs(min_f1));

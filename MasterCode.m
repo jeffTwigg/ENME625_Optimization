@@ -16,7 +16,10 @@ file_name = [path_prefix,'results_and_params.mat'];
 results_and_params = load(file_name);
 results_and_params = results_and_params.results_and_params;
 
-global alpha sigma epsilon
+global alpha sigma epsilon CF1 CF2
+
+CF1 = 0.01;
+CF2 = 0.01;
 
 %% helper functions 
 if(nargin < 1)

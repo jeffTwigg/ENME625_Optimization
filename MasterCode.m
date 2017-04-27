@@ -91,7 +91,10 @@ switch prob
         DP=1;
         nvar = 2; LB = [0,0]; UB=[pi,pi];
         %Find Maximize DP
-        delta_P = maximumDeltaP([pi/2,pi/2],[-2,-2],[2,2],@TNK_NEGCN2);
+        X = [pi/2,pi/2]; pop=20;
+        constraint_function = @(X,DP) -robust_TNK_constraints(X,DP);
+        delta_P = maximumDeltaP(X,[1.0,1.0],[-2,2;-2,2],constraint_function,pop);
+        %delta_P = maximumDeltaP([pi/2,pi/2],[-2,-2],[2,2],@TNK_NEGCN2);
         problem_function = @(X) TNK_Robust(X,delta_P);
         problem_constraint = @(X) TNK_NEGCN2(X,delta_P); 
     case 8

@@ -1,7 +1,7 @@
 clear all; close all; clc; warning off;
 
 global alpha sigma epsilon Mmoga CF1 CF2 DP
-prompt3 = 'Would you like to run Test Problems or Flight Path Problem? \n 1 - Test Problems \n 2 - Flight Path Problem';
+prompt3 = 'Would you like to run Test Problems or Flight Path Problem? \n 1 - Other Test Problems \n 2 - Flight Path Problem';
 FPPYN = input(prompt3);
 
 if FPPYN == 1
@@ -107,10 +107,5 @@ if FPPYN == 1
         OS_M = ParetoSpread(Fmoga,[max_P1 max_P2],[min_P1 min_P2]); %Pareto Spread of MATLABs MOGA
 
     end
-elseif FPPYN == 2 %Outputs solutions for FPP. Required files are FlightPathOpt.m, getDistanceExclustionZone.m, 
-                  %makeWindFun.m, getTimeFromPath.m, and flightConstraints.m.
-    seed = 50; 
-    FlightPathOpt(seed); 
-else 
-    fprintf('Not a valid input')
-end
+elseif FPPYN == 2
+    g

@@ -1,6 +1,6 @@
 function [ f ] = ZDT3( X )
-%ZDT1 - First test problem from Deb
 
+global Mmoga
 nvar = length(X(1,:));
 F1 = X(:,1);
 
@@ -13,7 +13,11 @@ nconstr = 0*ones(length(X(:,1)),1);
 nconstr_lin = 0*ones(length(X(:,1)),1);
 UNCT = 0*ones(length(X(:,1)),1);
 
-f = [F1,F2,nfunc,nconstr,nconstr_lin,UNCT];
+if Mmoga == 0,
+    f = [F1,F2,nfunc,nconstr,nconstr_lin,UNCT];
+else
+    f = [F1,F2];
+end
 
 
 

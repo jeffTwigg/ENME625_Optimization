@@ -66,4 +66,3 @@ end
 
 params = [nvar,nRun,nChrome,alpha,sigma,epsilon,CF1,CF2];
 end
-

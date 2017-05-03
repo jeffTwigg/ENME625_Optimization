@@ -1,13 +1,8 @@
 function [ fit ] = fitFCN5(X, ZD_func)
 %NSGA algorithm. Use Approach 1 for sorting
+
 global alpha sigma epsilon CF1 CF2
 func = ZD_func(X);
-
-% 
-% if isempty(existing_points)
-%     fit = sum(ZD_func(X));
-%     return 
-% end
 
 %% Find Dominate Points
 
@@ -15,14 +10,13 @@ func = ZD_func(X);
 
 % func = [existing_points;ZD_func(X)];
 
+XOLin = X;
+UNCT = func(1,end);
 nfunc = func(1,end-3);
 nconstr = func(1,end-2);
 g = func(:,nfunc+1:nfunc+nconstr);
-nconstr_lin = func(1,end-1);
-if nconstr_lin > 0
-    fprintf('weird error here')
-end
-h = func(:,nfunc+nconstr+1:nfunc+nconstr+nconstr_lin);
+nconstr_eq = func(1,end-1);
+h = func(:,nfunc+nconstr+1:nfunc+nconstr+nconstr_eq);
 func = func(:,1:nfunc);
 
 [M,~] = size(X);
@@ -30,7 +24,7 @@ func = func(:,1:nfunc);
 
 
 
-if nconstr == 0 && nconstr_lin ==0
+if nconstr == 0 && nconstr_eq ==0
     nc_col = nfunc + 3;
     init_fit_col = nfunc + 4;
     sim_col = nfunc+5;
@@ -72,7 +66,6 @@ if nconstr == 0 && nconstr_lin ==0
 
     %% Similarity
     %Assess similarity layer-by-layer, assess in objective space.
-
     var_rem = 0;
     F_min = M+epsilon;
     for k = 1:numLayer
@@ -134,7 +127,7 @@ else
         for p = 1:nconstr
             if g(k,p)>0, flag = 1;
             end
-            if nconstr_lin ~= 0
+            if nconstr_eq ~= 0
                 if h(k,p)~=0, flag_lin = 1;
                 end            
             end            
@@ -144,7 +137,26 @@ else
         end
      end
     
-
+     %Evaluates feasible solutions with uncertaintly applied in problems with
+    %uncertainy
+     if UNCT == 1
+         for k = 1:M
+             if rank(k) == 0.5*M
+                 options = optimoptions(@ga,'PopulationSize',10,'UseVectorized',true);
+                 lb = -2; ub = 2;
+                 fitnessfn = @(DP) -TNK_NEGCN2(XOLin(k,:),DP);
+                 [DP,fval] = ga(fitnessfn,2,[],[],[],[],lb,ub,[],options);
+                 Constval = fval;
+                 if Constval > 0
+                     rank(k) = 0;
+                 else
+                     rank(k) = 0.5*M;
+                 end
+             else
+                 rank(k) = 0;
+             end
+         end        
+     end 
      
      % Collect together feasible population
      feas_pop = []; infeas_pop = []; m = 1;
@@ -159,7 +171,7 @@ else
               if isempty(h)
                   infeas_pop = [infeas_pop;func(k,:),g(k,:)];
               else
-                  infeas_pop = [infeas_pop;func(k,:),g(k,:),h(k,:)];                  
+                  infeas_pop = [infeas_pop;func(k,:),g(k,:),h(k,:)];             
               end
               loc(m) = k; m = m+1; %keep track of which solutions were infeasible
          end
@@ -171,66 +183,63 @@ else
           m = 1;
           for k = 1:length(place)
               if place(k) == 1
-                  Pareto(m,:) = feas_pop(k,:); %Assign noninferior points along with constraint values            
-                  rank(k) = 1; m = m+1;
+                  rank(k) = 1; m = m+1; %Assign noninferior points along with constraint values                            
               end
           end     
      end
     % Evaluate rank for infeasible individuals
-    g = infeas_pop(:,nfunc+1:nconstr+nfunc);
-    h = infeas_pop(:,nconstr+nfunc+1:end);
-    
-    for k = 1:length(g(:,1))
-        for p = 1:nconstr
-            if g(k,p)<=0
-                feas_g(k,p) = 0; delta_g(k,p) = 0;
+    if ~isempty(infeas_pop)
+        g = infeas_pop(:,nfunc+1:nconstr+nfunc);
+        h = infeas_pop(:,nconstr+nfunc+1:end);
+
+        for k = 1:length(g(:,1))
+            for p = 1:nconstr
+                if g(k,p)<=0
+                    feas_g(k,p) = 0; delta_g(k,p) = 0;
+                else
+                    feas_g(k,p) = g(k,p); delta_g(k,p) = 1;
+                end
+            end
+            if nconstr_eq == 0
+                feas_h = zeros(length(g(:,1)),1);
+                delta_h = zeros(length(g(:,1)),1);
             else
-                feas_g(k,p) = g(k,p); delta_g(k,p) = 1;
+                for n = 1:nconstr_eq
+                    feas_h(k,n) = abs(h(k,n));
+                end   
+                if h(k,p)==0, delta_h(k,p) = 0;
+                else delta_h(k,p) = 1;
+                end
             end
         end
-        if nconstr_lin == 0
-            feas_h = zeros(length(g(:,1)),1);
-            delta_h = zeros(length(g(:,1)),1);
-        else
-            for n = 1:nconstr_lin
-                feas_h(k,n) = abs(h(k,n));
-            end   
-            if h(k,p)==0, delta_h(k,p) = 0;
-            else delta_h(k,p) = 1;
+        num1 = sum(feas_g,2)+sum(feas_h,2);
+        denom1 = (sum(sum(feas_g))+sum(sum(feas_h)))/M;
+        J = nconstr; K = nconstr_eq;
+        num2 = (sum(delta_g,2)+sum(delta_h,2));
+        denom2 = (J+K);
+
+        factor1 = CF1.*(num1./denom1);  
+        factor2 = CF2.*(num2./denom2);
+
+
+
+        for k = 1:length(g(:,1))
+            if (factor1(k)> mean(factor1)) && (factor2(k) < mean(factor2))
+                w1 = 0.75; w2 = 0.25;
+            elseif (factor1(k) < mean(factor1)) && (factor2(k) > mean(factor2))
+                w1 = 0.25; w2 = 0.75;
+            else
+                w1 = 0.5; w2 = 0.5;
             end
+            fit_constr(k) = -((Cmax-(Cmax-Cmin)*(r-1)/(M-1))-(w1.*factor1(k)+w2.*factor2(k)));
         end
-    end
-    num1 = sum(feas_g,2)+sum(feas_h,2);
-    denom1 = (sum(sum(feas_g))+sum(sum(feas_h)))/M;
-    J = nconstr; K = nconstr_lin;
-    num2 = (sum(delta_g,2)+sum(delta_h,2));
-    denom2 = (J+K);
- 
-    factor1 = CF1.*(num1./denom1);  
-    factor2 = CF2.*(num2./denom2);
-    
-    
-    
-    for k = 1:length(g(:,1))
-        if (factor1(k)> mean(factor1)) && (factor2(k) < mean(factor2))
-            w1 = 0.75; w2 = 0.25;
-        elseif (factor1(k) < mean(factor1)) && (factor2(k) > mean(factor2))
-            w1 = 0.25; w2 = 0.75;
-        else
-            w1 = 0.5; w2 = 0.5;
+
+        for k = 1:length(loc)
+            rank(loc(k)) = fit_constr(k);
         end
-        fit_constr(k) = -((Cmax-(Cmax-Cmin)*(r-1)/(M-1))-(w1.*factor1(k)+w2.*factor2(k)));
-    end
-    
-    for k = 1:length(loc)
-        rank(loc(k)) = fit_constr(k);
     end
     fit = rank;
 
 
 end
 end
-    
-    
-    
-    

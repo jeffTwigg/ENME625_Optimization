@@ -1,8 +1,10 @@
-function [f,constraint] = CTP(X)
+function [f] = CTP(X)
+
+global Mmoga
 
 f1 = X(:,1);
-G = 1+ sum(X(:,2:end),2).^0.25;
-f2 = G.*(1-sqrt(f1/G));
+G = abs(1+ sum(X(:,2:end),2).^0.25);
+f2 = G.*(1-sqrt(f1./G));
 theta = -0.2*pi;
 a = 0.2;
 b=10;
@@ -16,9 +18,12 @@ constraint = right_ineq-left_ineq;
 
 nfunc = 2*ones(length(X(:,1)),1);
 nconstr = 1*ones(length(X(:,1)),1);
-nconstr_lin = 0*ones(length(X(:,1)),1);
+nconstr_eq = 0*ones(length(X(:,1)),1);
 UNCT = 0*ones(length(X(:,1)),1);
 
-f = [f1,f2,constraint,nfunc,nconstr,nconstr_lin,UNCT];
-
+if Mmoga == 0
+    f = [f1,f2,constraint,nfunc,nconstr,nconstr_eq,UNCT];
+else 
+    f = [f1,f2];
+end
 end

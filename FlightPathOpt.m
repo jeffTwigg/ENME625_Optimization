@@ -8,8 +8,8 @@
 %
 
 %% First make some random vector field of wind, and set parameters
- function [FVAL]  = FlightPathOpt
-clear; clf;
+ function [FVAL]  = FlightPathOpt(seed)
+clf;
 
 AirSpeed = 500;
 sizeX = 50;
@@ -81,6 +81,7 @@ h_path = plot(PathPoints(:,1),PathPoints(:,2),'k','linewidth',2);
 LineTime = getTimeFromPath(PathPoints,W_x,W_y,AirSpeed);
 fprintf('Travel Time: %d hours, %.1f minutes\n',floor(LineTime),rem(LineTime,1)*60);
 %% Add No Fly Zone
+rng(seed);
 xc = [40,20]; yc = [5,20]; radius = [8.3,7.5];  %Alter these params to get different no-fly zones
 
 

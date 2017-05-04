@@ -14,131 +14,47 @@ XOLin = X;
 UNCT = func(1,end);
 nfunc = func(1,end-3);
 nconstr = func(1,end-2);
-g = func(:,nfunc+1:nfunc+nconstr);
+inequality_constraints = func(:,nfunc+1:nfunc+nconstr);
 nconstr_eq = func(1,end-1);
-h = func(:,nfunc+nconstr+1:nfunc+nconstr+nconstr_eq);
+equality_constraints = func(:,nfunc+nconstr+1:nfunc+nconstr+nconstr_eq);
 func = func(:,1:nfunc);
 
 [M,~] = size(X);
 
 
 
-
+%% If there are no 
 if nconstr == 0 && nconstr_eq ==0
-    nc_col = nfunc + 3;
-    init_fit_col = nfunc + 4;
-    sim_col = nfunc+5;
-    indecies = [1:M]';
-    func = [func,indecies]; %We need to know indecies later so this should save time
-    P_temp = func;
-    level = 0;
-    level_col = nfunc +2;
-    func(:,level_col) = 0;
-    while ~isempty(P_temp)
-        level = level+1;% increment the level value
-        if length(P_temp(:,1))== 1
-            %If there is only one value left at the end, assign this to a level
-            func(P_temp(:,nfunc+1),level_col) = level;
-            break 
-        end
-        place = paretoset(P_temp(:,1:nfunc)); % get all the indecies in the lowest layer
-        for k = 1:length(place)
-            if place(k) == 1
-                current_level_indecies = P_temp(k,nfunc+1); %map them from
-                func(current_level_indecies, level_col) = level; % assiged from prtp
-            end
-        end     
-
-        P_temp(place, :) = [];
-    end
-
-    numLayer = level; 
-
-    %Make sure all individuals have a layer number
-    flag = 0;
-    for k = 1:M
-       if func(level_col)==0
-           func(k,level_col) = numLayer+1;
-           flag = 1;
-       end
-    end
-    if flag == 1, numLayer = numLayer+1; end
-
-    %% Similarity
-    %Assess similarity layer-by-layer, assess in objective space.
-    var_rem = 0;
-    F_min = M+epsilon;
-    for k = 1:numLayer
-        Fitness = []; incl = []; 
-        incl = find(func(:,level_col)==k); % incl = include
-        Fitness = func(incl,1:nfunc);
-        var_rem = var_rem+length(Fitness(:,1));
-        if(isempty(Fitness) == 0)
-            if length(incl) == 1
-
-                F_int = F_min-epsilon;
-                Fit_share = F_int;
-                func(incl,sim_col+1) = F_int;
-                func(incl,sim_col) = F_int;
-                func(incl,nc_col) = 1;
-            else
-                for m = 1:nfunc
-                    maxF(m) = max(Fitness(:,m));
-                    minF(m) = min(Fitness(:,m));
-                    func(m,init_fit_col) = minF(m);
-                end
-                d = []; similar = []; sh = [];
-                for i = 1:length(incl)
-                    F_int = F_min-epsilon;
-                    for j = 1:length(incl)
-                        for p = 1:nfunc
-                            similar(p) = ((Fitness(i,p)-Fitness(j,p))/(maxF(p)-minF(p)))^2;
-                        end
-                        d(i,j) = sqrt(sum(similar));
-                        if d(i,j)<=sigma
-                            sh(i,j) = 1-(d(i,j)/sigma)^alpha;
-                        else sh(i,j) = 0;
-                        end
-                    end
-                    nc(i) = sum(sh(i,:));
-                    Fit_share(i) = F_int/nc(i);
-                    func(incl(i),nc_col) = nc(i);
-                    func(incl(i),sim_col) = Fit_share(i);
-                    func(incl(i),sim_col+1) = F_int;
-
-                end
-            end
-            F_min = min(Fit_share);
-        end
-
-    end
-    
-    %Since a greater fitness value is a larger number, we use the inverse
-    fit = -func(:,sim_col);
+    fit = NSGA(func);
 
 %% Constraint Handling
 else
     Cmax = 1.2; Cmin = 0.8; r = 0.8*M; 
-    rank = zeros(1,M);
+    rank = zeros(M,1);
     
     % Assign moderate rank to all feasible solutions
-     for k = 1:M
-        flag = 0; flag_lin = 0;
-        for p = 1:nconstr
-            if g(k,p)>0, flag = 1;
-            end
-            if nconstr_eq ~= 0
-                if h(k,p)~=0, flag_lin = 1;
-                end            
-            end            
-        end
-        if flag == 0 && flag_lin == 0
-            rank(k) = 0.5*M;
-        end
-     end
     
+    infeasible_indecies = max(inequality_constraints,[],2)>0;
+    feasible_indecies = max(inequality_constraints,[],2)<0;
+    rank(feasible_indecies) = 0.5*M;
+    
+%      for k = 1:M
+%         flag = 0; flag_lin = 0;
+%         for p = 1:nconstr
+%             if g(k,p)>0, flag = 1;
+%             end
+%             if nconstr_eq ~= 0
+%                 if h(k,p)~=0, flag_lin = 1;
+%                 end            
+%             end            
+%         end
+%         if flag == 0 && flag_lin == 0
+%             rank(k) = 0.5*M;
+%         end
+%      end
+%     
      %Evaluates feasible solutions with uncertaintly applied in problems with
-    %uncertainy
+    %uncertainy ( only for robust problems
      if UNCT == 1
          for k = 1:M
              if rank(k) == 0.5*M
@@ -159,39 +75,35 @@ else
      end 
      
      % Collect together feasible population
-     feas_pop = []; infeas_pop = []; m = 1;
-     for k = 1:M
-         if rank(k) ~= 0
-             if isempty(h)
-                 feas_pop = [feas_pop;func(k,:),g(k,:)];
-             else
-                 feas_pop = [feas_pop;func(k,:),g(k,:),h(k,:)];
-             end
-         else
-              if isempty(h)
-                  infeas_pop = [infeas_pop;func(k,:),g(k,:)];
-              else
-                  infeas_pop = [infeas_pop;func(k,:),g(k,:),h(k,:)];             
-              end
-              loc(m) = k; m = m+1; %keep track of which solutions were infeasible
-         end
-     end
+     %feas_pop = []; infeas_pop = []; %m = 1;
      
-     % Identify noninferior points
-     if ~isempty(feas_pop)
-          place = paretoset(feas_pop(:,1:nfunc)); 
-          m = 1;
-          for k = 1:length(place)
-              if place(k) == 1
-                  rank(k) = 1; m = m+1; %Assign noninferior points along with constraint values                            
-              end
-          end     
-     end
+%      for k = 1:M
+%          if rank(k) ~= 0
+%              if isempty(h)
+%                  feas_pop = [feas_pop;func(k,:),g(k,:)];
+%              else
+%                  feas_pop = [feas_pop;func(k,:),g(k,:),h(k,:)];
+%              end
+%          else
+%               if isempty(h)
+%                   infeas_pop = [infeas_pop;func(k,:),g(k,:)];
+%               else
+%                   infeas_pop = [infeas_pop;func(k,:),g(k,:),h(k,:)];             
+%               end
+%               loc(m) = k; m = m+1; %keep track of which solutions were infeasible
+%          end
+%      end
+     
+    infeas_pop = func(infeasible_indecies,:);
+    feas_pop = func(feasible_indecies,:);
     % Evaluate rank for infeasible individuals
     if ~isempty(infeas_pop)
-        g = infeas_pop(:,nfunc+1:nconstr+nfunc);
-        h = infeas_pop(:,nconstr+nfunc+1:end);
+        %g = infeas_pop(:,nfunc+1:nconstr+nfunc);
+        %h = infeas_pop(:,nconstr+nfunc+1:end);
 
+        g = inequality_constraints(infeasible_indecies,:);
+        h = equality_constraints(infeasible_indecies,:);
+        
         for k = 1:length(g(:,1))
             for p = 1:nconstr
                 if g(k,p)<=0
@@ -234,9 +146,32 @@ else
             fit_constr(k) = -((Cmax-(Cmax-Cmin)*(r-1)/(M-1))-(w1.*factor1(k)+w2.*factor2(k)));
         end
 
-        for k = 1:length(loc)
-            rank(loc(k)) = fit_constr(k);
-        end
+        rank(infeasible_indecies) = fit_constr;
+        %for k = 1:length(loc)
+        %    rank(loc(k)) = fit_constr(k);
+        %end
+        
+             % Identify noninferior points
+     if ~isempty(feas_pop)
+          place = paretoset(feas_pop(:,1:nfunc));
+          dominant_feasible = zeros(M,1);
+          dominant_feasible(feasible_indecies) = place;
+          %rank(place == 1) = 1;
+          if sum(place) > 500000          
+              fit = -NSGA(feas_pop(:,1:nfunc));
+              %fit = (1-fit/max(fit))+min(rank);
+              %rank(feasible_indecies) = fit;
+          else
+              rank(dominant_feasible ==1 ) = 1;
+          end
+          %m = 1;
+          %for k = 1:length(place)
+          %    if place(k) == 1
+          %        rank(k) = 1; m = m+1; %Assign noninferior points along with constraint values                            
+          %    end
+          %end     
+     end
+        
     end
     fit = rank;
 

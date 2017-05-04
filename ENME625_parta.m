@@ -1,5 +1,5 @@
 clear all; close all; clc; warning off;
-
+rng(4)
 global alpha sigma epsilon Mmoga CF1 CF2
 
 prompt2 = 'Run full code or see results only? \n 1 - Run Full Code \n 2 - Results only \n';
@@ -7,6 +7,8 @@ runType = input(prompt2);
 
 prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n 5 - TNK \n 6 - CTP \n';
 prob = input(prompt);
+
+runType =1; prob = 5;
 
 %% Load Selected Problem and Optimization Parameters
 switch prob
@@ -46,27 +48,39 @@ end
 if runType == 1
     %% Matlab's MOGA
 
-    options = optimoptions('gamultiobj','PopulationSize', nChrome,'CrossoverFcn', @crossoverscattered,'Display', 'final','PlotFcn', { @gaplotpareto },'ParetoFraction', 0.9);
+    options = optimoptions('gamultiobj','PopulationSize', nChrome,'CrossoverFcn', @crossoverscattered,'ParetoFraction', 0.9,'MaxGenerations',400,'FunctionTolerance',0.000000000000001);
     Mmoga = 1;
     [Xmoga,Fmoga] = gamultiobj(problem_function,nvar,A,b,Aeq,beq,LB,UB,problem_constraints,options);
-    Mmoga = 0;
-
+    
     figure
     plot(Fmoga(:,1),Fmoga(:,2),'bo','LineWidth',2);
     hold on
+    Mmoga = 0;
+
+%nChrome
+%nChrome =200;
 
     %% Our MOGA
     Pareto = [];
-    options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true,'CrossoverFraction', 0.90);
-    optF =[]; optX = [];
-    for gen = 1:nRun
-        Obj_fcn = @(X) fitFCN5(X,problem_function);
-        [X,fval,exitflag,output] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
-        [optF(gen,:)] = problem_function(X);
-        optX(gen,:) = X;
-    end
-    nfunc = optF(1,end-3);
-
+    options = optimoptions(@ga,'PopulationSize',nChrome,'UseVectorized',true,'CrossoverFraction', 0.99,'MaxGenerations',400,'FunctionTolerance',0.0000000000000000000000001);
+%     optF =[]; optX = [];
+%     for gen = 1:nRun
+%        Obj_fcn = @(X) fitFCN5(X,problem_function);
+%        [X,fval,exitflag,output] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
+%        [optF(gen,:)] = problem_function(X);
+%        optX(gen,:) = X;
+%     end
+%   nfunc = optF(1,end-3);
+    
+    
+    Obj_fcn = @(X) fitFCN5(X,problem_function);
+    [X,fval,exitflag,output,population] = ga(Obj_fcn,nvar,A,b,Aeq,beq,LB,UB,[],options);
+    vals =  problem_function(population);
+    optF = vals(:,1:2);
+    nfunc = 2;
+    
+    
+    
      P = paretoset(optF(:,1:nfunc)); 
      m = 1;
         for k = 1:length(P)

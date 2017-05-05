@@ -96,6 +96,7 @@ else
      
     infeas_pop = func(infeasible_indecies,:);
     feas_pop = func(feasible_indecies,:);
+    fit_constr = 0;
     % Evaluate rank for infeasible individuals
     if ~isempty(infeas_pop)
         %g = infeas_pop(:,nfunc+1:nconstr+nfunc);
@@ -157,13 +158,17 @@ else
           dominant_feasible = zeros(M,1);
           dominant_feasible(feasible_indecies) = place;
           %rank(place == 1) = 1;
-          if sum(place) > 500000          
+          if sum(feasible_indecies) > 1          
               fit = -NSGA(feas_pop(:,1:nfunc));
-              %fit = (1-fit/max(fit))+min(rank);
-              %rank(feasible_indecies) = fit;
+              %scaled_fit = -(1-fit/max(fit))+max(fit_constr);
+              scaled_fit = fit;
+              rank(feasible_indecies) = scaled_fit +100000;
           else
-              rank(dominant_feasible ==1 ) = 1;
+              rank(dominant_feasible ==1 ) = max(fit_constr)+100000;
           end
+          
+          
+          
           %m = 1;
           %for k = 1:length(place)
           %    if place(k) == 1
@@ -171,9 +176,26 @@ else
           %    end
           %end     
      end
-        
-    end
-    fit = rank;
+     
+     if(sum(rank(infeasible_indecies)>0) > 0)
+        fprintf('ah! what is happening') 
+     end
+     
+     if(sum(rank>50000000000)>0)
+         fprintf('somehow something is unnassigned')
+     end
+    
+     %if(sum(feasible_indecies)>50)
+     %    fprintf('feasible_pop')
+     %end
+    fit = -rank;
+    
+    figure(5)
+    scatter(func(:,1),func(:,2),5*ones(length(func),1),rank)
+    axis([0,3,0,3])
+
+    colorbar
+    pause(0.01)
 
 
 end

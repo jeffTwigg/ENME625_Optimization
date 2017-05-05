@@ -1,5 +1,5 @@
 clear all; close all; clc; warning off;
-rng(4)
+
 global alpha sigma epsilon Mmoga CF1 CF2
 
 prompt2 = 'Run full code or see results only? \n 1 - Run Full Code \n 2 - Results only \n';

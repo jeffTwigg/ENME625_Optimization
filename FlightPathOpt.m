@@ -152,6 +152,7 @@ else
     options = optimoptions(options,'Display', 'final');
     %options = optimoptions(options,'PlotFcn', { @gaplotpareto });
     options = optimoptions(options,'ParetoFraction', 0.9);
+    options = optimoptions(options,'PopulationSize', 300);
     [X,FVAL,EXITFLAG,OUTPUT,POPULATION,SCORE] = gamultiobj(problem_function,length(ic),[],[],[],[],lb,ub,problem_constraints,options);
 end
 

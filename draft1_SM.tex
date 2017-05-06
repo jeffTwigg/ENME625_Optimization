@@ -8,6 +8,10 @@
 \usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
 \definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
 \definecolor{mylilas}{RGB}{170,55,241}
+\usepackage{float}
+\floatplacement{figure}{H}
+
+\usepackage{caption}
 
 
 
@@ -43,7 +47,7 @@ The method by which fitness was assigned to each individual within a population 
 \noindent Within NSGA, there are certain parameters which affect the final generation of the Pareto frontier. It was found for the test problems, the selection of the fitness degradation parameter, $\epsilon$, and the sharing parameter, $\sigma$, were the most important. The fitness degradation parameter, $\epsilon$, affects the difference in initial fitness values between layers. The larger the value of $\epsilon$, the higher a penalty is placed on individuals in non-dominated layers that are not in the Pareto layer. The sharing parameter, $\sigma$, affects the closeness of the final Pareto points. The higher the value of $\sigma$, the more "gaps" in the frontier.  \newline
 
 \noindent The next sections shall discuss the unconstrained problems ZDT1, ZDT2, and ZDT3, the results from the fitness function NSGA and MATLAB's "ga" function as well as the results from MATLAB's "gamultiobj" function for each. 
-
+\newpage
 \subsection{ZDT1} 
 The first test problem, denoted as ZDT1 in \cite{deb2001multi} is shown below. 
 
@@ -58,6 +62,8 @@ The first test problem, denoted as ZDT1 in \cite{deb2001multi} is shown below.
 \end{align*}
 
 \noindent The true Pareto frontier for this problem occurs when $x_i = 0$ for i = 2,...,30. Figure~\ref{fig:ZDT1} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. The quality metrics chosen to evaluate this problem are Coverage Difference (CD)and Pareto Spread (OS). Ten runs for each algorithm were performed and the mean and standard deviation of each metric are tabulated in Table~\ref{tab:ZDT1}.
+
+
 \begin{figure}[h]
   \caption{Example Pareto Results for ZDT1}
   \centering
@@ -85,6 +91,8 @@ OS & 0.9605 (0.1088) & 0.9283 (0.0928) \\ \hline
 
 \noindent From these metrics, there is certainly a trade-off between MATLABs MOGA and the MOGA developed in this project. The coverage difference of the new MOGA is better in this problem whereas the Pareto spread is improved when using MATLABs MOGA. 
 
+
+\newpage
 \subsection{ZDT2} 
 The second test problem, denoted as ZDT2 in \cite{deb2001multi} is shown below. 
 
@@ -99,14 +107,14 @@ The second test problem, denoted as ZDT2 in \cite{deb2001multi} is shown below.
 \end{align*}
 
 \noindent The true Pareto frontier for this problem, similar to ZDT1, occurs when $x_i$ = 0 for i = 2,...,30. Figure~\ref{fig:ZDT2} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:ZDT2} summarizes the mean quality metrics for each algorithm for ten runs.
-\begin{figure}[h!]
+\begin{figure}[H]
   \caption{Example Pareto Results for ZDT2}
   \centering
   \includegraphics[width=0.85\textwidth]{ZDT2_pareto_final.png}  
   \label{fig:ZDT2}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \caption{Quality Metrics for ZDT2} 
 \centering 
 \begin{tabular}{|c|c|c|} 
@@ -117,13 +125,22 @@ OS &  0.8781 (0.0946) & 1.0086 (0.0278)  \\ \hline
 \end{tabular}
 \label{tab:ZDT2} 
 \end{table}
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{ZDT2 Quality Metrics}
   \centering
   \includegraphics[width=0.85\textwidth]{ZDT2_QM.png}  
   \label{fig:ZDT2_QM}
 \end{figure}
+\newpage
+\newpage
+\newpage
+\goodbreak
+\newpage
+    
+\goodbreak
 
+\newpage
+\goodbreak
 \subsection{ZDT3} 
 The third test problem, denoted as ZDT3 in \cite{deb2001multi} is shown below. 
 
@@ -139,14 +156,14 @@ The third test problem, denoted as ZDT3 in \cite{deb2001multi} is shown below.
 
 \noindent The true Pareto frontier for this problem again occurs when $x_i$ = 0 for i = 2,...,30. Figure~\ref{fig:ZDT3} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:ZDT3} summarizes the mean quality metrics for each algorithm for ten runs. \newline
 
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{Example Pareto Results for ZDT3}
   \centering
   \includegraphics[width=0.85\textwidth]{ZDT3_pareto_final.png}  
   \label{fig:ZDT3}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \caption{Quality Metrics for ZDT3} 
 \centering 
 \begin{tabular}{|c|c|c|} 
@@ -195,7 +212,7 @@ g_6(x) &= 1-\frac{(x_5-3)^2+x_6}{4} \leq 0 \\
 1 &\leq  x_3,x_5  \leq 5 \\
 0 &\leq  x_4  \leq 6 \\
 \end{align*}
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{True Pareto Frontier for OSY}
   \centering
   \includegraphics[width=0.85\textwidth]{OSY_pareto_true.png}  
@@ -210,7 +227,7 @@ g_6(x) &= 1-\frac{(x_5-3)^2+x_6}{4} \leq 0 \\
   \label{fig:OSY}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \caption{Quality Metrics for OSY} 
 \centering 
 \begin{tabular}{|c|c|c|} 
@@ -221,13 +238,13 @@ OS & 0.5322 (0.3393) & 0.9608 (0.2427) \\ \hline
 \end{tabular}
 \label{tab:OSY} 
 \end{table}
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{OSY Quality Metrics}
   \centering
   \includegraphics[width=0.85\textwidth]{OSY_QM.png}  
   \label{fig:OSY_QM}
 \end{figure}
- 
+\newpage
 \subsection{TNK} 
 This test problem, denoted as TNK in \cite{deb2001multi} is shown below with the true Pareto frontier shown in Figure~\ref{fig:TNK_true}.
 
@@ -238,7 +255,7 @@ This test problem, denoted as TNK in \cite{deb2001multi} is shown below with the
 g_2(x) &= (x_1 - 0.5)^2 + (x_2 - 0.5)^2 -0.5 \leq 0 \\
 0 &\leq  x_1,x_2 \leq \pi \\
 \end{align*}
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{True Pareto Frontier for TNK}
   \centering
   \includegraphics[width=0.85\textwidth]{TNK_pareto_true.png}  
@@ -254,7 +271,7 @@ g_2(x) &= (x_1 - 0.5)^2 + (x_2 - 0.5)^2 -0.5 \leq 0 \\
   \label{fig:TNK}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \caption{Quality Metrics for TNK} 
 \centering 
 \begin{tabular}{|c|c|c|} 
@@ -265,7 +282,7 @@ OS & 0.4177 (0.3216) & 0.9763 (0.0178)\\ \hline
 \end{tabular}
 \label{tab:TNK} 
 \end{table}
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{TNK Quality Metrics}
   \centering
   \includegraphics[width=0.85\textwidth]{TNK_QM.png}  
@@ -273,7 +290,7 @@ OS & 0.4177 (0.3216) & 0.9763 (0.0178)\\ \hline
 \end{figure}
  
 \noindent Comparing the estimated Pareto frontiers to the true Pareto frontier, is is clear that our MOGA outperforms MATLAB's MOGA. The Pareto spread in our MOGA is significantly higher however the coverage difference is higher in MATLABs MOGA (p<0.05).
-
+\newpage
 \subsection{CTP} 
 This test problem, denoted as CTP in \cite{deb2001multi} is shown below and the true Pareto frontier is shown in Figure~\ref{fig:CTP_true}. 
 
@@ -288,7 +305,7 @@ g(x) &= |1+(\sum_{i=2}^{10}x_i)^{0.25}| \\
 0 &\leq  x_1  \leq 1 \\
 -5 &\leq  x_i  \leq 5, i = 2,...,10 \\
 \end{align*}
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{True Pareto Frontier for CTP}
   \centering
   \includegraphics[width=0.85\textwidth]{CTP_pareto_true.png}  
@@ -303,7 +320,7 @@ g(x) &= |1+(\sum_{i=2}^{10}x_i)^{0.25}| \\
   \label{fig:CTP}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \caption{Quality Metrics for CTP} 
 \centering 
 \begin{tabular}{|c|c|c|} 
@@ -314,7 +331,7 @@ OS & 0.7901 (0.0734) & 0.5959 (0.1324) \\ \hline
 \end{tabular}
 \label{tab:CTP} 
 \end{table} 
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{CTP Quality Metrics}
   \centering
   \includegraphics[width=0.85\textwidth]{CTP_QM.png}  
@@ -322,9 +339,20 @@ OS & 0.7901 (0.0734) & 0.5959 (0.1324) \\ \hline
 \end{figure}
  
 \noindent The mean values for coverage difference are exactly the same for both algorithms. In fact a paired t-test also shows the means are not statistically difference(p>0.05). For Pareto spread, MATLAB's MOGA performs the highest.
-
+\newpage
 \section{Robust Problems} 
-Some discussion of the robust methods here. 
+To solve problems with an uncertain variable we implement RMOGA.  One way to ensure robustness for a given population considered in GA, is by finding the value of the uncertain variable which maximizes the constraint values acording to each member in the population.  Another way is to discretize the dependent variable and then find which uncertain variable in this set maximizes the constraint values.  This latter method is the one we chose because of the decreased execution time over the former.  These two options are shown in figure \ref{fig:discretize}.
+   Since the uncertainty term only appears in the constraints portion of both of the problems we consider this discretization is fairly simple.  In addition, since the uncertain terms are linearly combined in the constraints, this discretization is trivial.
+
+
+\begin{figure}[H]
+  \caption{Options for making optimization robust to uncertain variables. }
+  \centering
+  \includegraphics[width=0.85\textwidth]{Robustness.png}  
+  \label{fig:discretize}
+\end{figure}
+
+
  
 \subsection{Robust TNK} 
 This test problem, denoted as TNK in \cite{deb2001multi} is shown below with the true Pareto frontier shown in Figure~\ref{fig:TNK_true}.
@@ -340,14 +368,14 @@ g_2(x) &= (x_1 - 0.5)^2 + (x_2 - 0.5)^2 -0.5 \leq 0 \\
 \end{align*}
 
 \noindent Figure~\ref{fig:robust} shows a sample result from both MATLABs built in MOGA and the robust MOGA developed in this project. Table~\ref{tab:robustTNK} summarizes the mean quality metrics for each algorithm for ten runs.
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{Example Pareto Results for TNK}
   \centering
   \includegraphics[width=0.85\textwidth]{prob7_nChr25_nRun400.png}  
   \label{fig:robustTNK}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \caption{Quality Metrics for Robust TNK (10 Runs)} 
 \centering 
 \begin{tabular}{|c|c|c|} 
@@ -376,23 +404,49 @@ Now let us consider the final problem where we try to minimize the total flight 
 \end{align*}
 
 \noindent The function $flightTime(\textbf{x},\textbf{y})$ is a black-box. The values $\textbf{xc}_j$ and  $\textbf{yc}_j$ specify the exclusion zone centers while $\textbf{r}_j$ specify the radii. A solution to this problem is shown in figure \ref{fig:FPP}.  In this figure there are two exclusion zones.
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{True Pareto Frontier for CTP}
   \centering
   \includegraphics[width=0.85\textwidth]{FPP.png}  
   \label{fig:FPP}
 \end{figure}
 	
-\begin{figure}[h]
+\begin{figure}[H]
   \caption{True Pareto Frontier for CTP}
   \centering
   \includegraphics[width=0.85\textwidth]{FPP_pareto.png}  
   \label{fig:FPP_pareto}
 \end{figure}
 
+\begin{table}[H]
+\caption{Quality Metrics for Robust FPP (10 Runs)} 
+\centering 
+\begin{tabular}{|c|c|c|} 
+\hline\hline  
+Metric &  Our MOGA \\ \hline
+CD & 0.2427 (0.0704) \\ \hline
+OS & 0.4794 (0.1220) \\ \hline
+\end{tabular}
+\label{tab:robustTNK} 
+\end{table}
+
+
+
+
+%
+%\begin{table}[h]
+%\caption{Quality Metrics for Robust FPP with waypoint constraints(10 Runs)} 
+%\centering 
+%\begin{tabular}{|c|c|c|} 
+%\hline\hline  
+%Metric &  Our MOGA \\ \hline
+%CD & 0.27 0.0269) \\ \hline
+%OS & 0.4794 (0.1220) \\ \hline
+%\end{tabular}
+%\label{tab:robustTNK} 
+%\end{table}
 
  
- \newpage
 \vspace{-0.1in}
 \bibliographystyle{IEEEtran}
 \bibliography{references.bib}

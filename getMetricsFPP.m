@@ -8,7 +8,7 @@ if nargin == 0
         
         f = FlightPathOpt(i+15);
         i=i+1;
-        if length(f)==90
+        if length(f)>90
             CD = coverageDifference2(f);
             if( CD < 100)
                 fval{n,1} =f;

@@ -32,7 +32,7 @@ Multi-Objective Optimization with Genetic Algorithms}
  
 \section{Introduction}
  
-This report develops multi-objective optimization methods using genetic algorithms. Three cases of multi-objective optimization are considered: unconstrained optimization, constrained optimization, and robust optimization. A fitness function for the first two cases was developed using the built-in MATLAB 'ga' routine. The last case was developed such that uncertainty in function parameters could be handled and robustly optimized against.
+This report develops multi-objective optimization methods using genetic algorithms. Three cases of multi-objective optimization are considered: unconstrained optimization, constrained optimization, and robust optimization. A fitness function for the first two cases was developed using the built-in MATLAB 'ga' routine. The last case was developed such that uncertainty in function parameters could be handled and robustly optimized against. \newline
 
 \noindent Each method developed was evaluated through the use of well-known test problems. The resulting Pareto frontier of each method was evaulated in terms of quality metrics. Finally, the results of the developed methods were compared to results obtained by using the built-in MATLAB 'gamultiobj' routine.
  
@@ -44,7 +44,7 @@ The method by which fitness was assigned to each individual within a population 
 
 \noindent Once each individual belongs to a layer, the fitness assignment is accomplished layer-by-layer. The initial fitness of the first layer is assigned based on the number of points in the entire population. The similarity of an individual to other individuals in the current layer is evaluated based on the maximum and minimum values within that layer. This may be done in terms of the objective or the design space. For this project, similarity was computed in the objective space. Finally, based on the similarity of each individuals, a niche count is assigned to that individual and the final shared fitness of that individual is assigned by the ratio of the initial layer fitness and the individual niche count. The next layer is then evaluated in the same manner with its initial fitness based on the minimum shared fitness value of the previous layer. \newline 
 
-\noindent Within NSGA, there are certain parameters which affect the final generation of the Pareto frontier. It was found for the test problems, the selection of the fitness degradation parameter, $\epsilon$, and the sharing parameter, $\sigma$, were the most important. The fitness degradation parameter, $\epsilon$, affects the difference in initial fitness values between layers. The larger the value of $\epsilon$, the higher a penalty is placed on individuals in non-dominated layers that are not in the Pareto layer. The sharing parameter, $\sigma$, affects the closeness of the final Pareto points. The higher the value of $\sigma$, the more "gaps" in the frontier.  \newline
+\noindent Within NSGA, there are certain parameters which affect the final generation of the Pareto frontier. It was found for the test problems, the selection of the fitness degradation parameter, $\epsilon$, and the sharing parameter, $\sigma$, were the most important. The fitness degradation parameter, $\epsilon$, affects the difference in initial fitness values between layers. The larger the value of $\epsilon$, the higher a penalty is placed on individuals in non-dominated layers that are not in the Pareto layer. The sharing parameter, $\sigma$, affects the closeness of the final Pareto points. The higher the value of $\sigma$, the more "gaps" in the frontier. For each problem, these parameters were randomly tuned such that the "best" Pareto frontier (in terms of coverage difference and Pareto spread). \newline
 
 \noindent The next sections shall discuss the unconstrained problems ZDT1, ZDT2, and ZDT3, the results from the fitness function NSGA and MATLAB's "ga" function as well as the results from MATLAB's "gamultiobj" function for each. 
 \newpage
@@ -61,7 +61,7 @@ The first test problem, denoted as ZDT1 in \cite{deb2001multi} is shown below.
 0 &\leq  \textbf{x}  \leq 1 \\
 \end{align*}
 
-\noindent The true Pareto frontier for this problem occurs when $x_i = 0$ for i = 2,...,30. Figure~\ref{fig:ZDT1} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. The quality metrics chosen to evaluate this problem are Coverage Difference (CD)and Pareto Spread (OS). Ten runs for each algorithm were performed and the mean and standard deviation of each metric are tabulated in Table~\ref{tab:ZDT1}.
+\noindent The true Pareto frontier for this problem occurs when $x_i = 0$ for i = 2,...,30. Figure~\ref{fig:ZDT1} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. In this problem, $\alpha=1$, $\sigma = 0.158$, and $\epsilon = 0.22$. The final results were found using 300 chromosomes in each population. The quality metrics chosen to evaluate this problem (and all other problems) are Coverage Difference (CD) and Pareto Spread (OS). Ten runs for each algorithm were performed using the same initialization parameters and the mean and standard deviation of each metric are tabulated in Table~\ref{tab:ZDT1}.
 
 
 \begin{figure}[h]
@@ -89,7 +89,7 @@ OS & 0.9605 (0.1088) & 0.9283 (0.0928) \\ \hline
   \label{fig:ZDT1_QM}
 \end{figure}
 
-\noindent From these metrics, there is certainly a trade-off between MATLABs MOGA and the MOGA developed in this project. The coverage difference of the new MOGA is better in this problem whereas the Pareto spread is improved when using MATLABs MOGA. 
+\noindent From these metrics, there is certainly a trade-off between MATLABs MOGA and the MOGA developed in this project. The coverage difference of the new MOGA is lower (and therefore superior) in this problem whereas the Pareto spread is improved when using MATLABs MOGA. 
 
 
 \newpage
@@ -106,7 +106,7 @@ The second test problem, denoted as ZDT2 in \cite{deb2001multi} is shown below.
 0 &\leq  \textbf{x}  \leq 1 \\
 \end{align*}
 
-\noindent The true Pareto frontier for this problem, similar to ZDT1, occurs when $x_i$ = 0 for i = 2,...,30. Figure~\ref{fig:ZDT2} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:ZDT2} summarizes the mean quality metrics for each algorithm for ten runs.
+\noindent The true Pareto frontier for this problem, similar to ZDT1, occurs when $x_i$ = 0 for i = 2,...,30. Selected parameters were similar to ZDT1 where $\alpha = 0.5$, $\sigma=0.5$, $\epsilon=0.22$; the number of chromosomes was 300. Figure~\ref{fig:ZDT2} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:ZDT2} summarizes the mean quality metrics for each algorithm over ten runs.
 \begin{figure}[H]
   \caption{Example Pareto Results for ZDT2}
   \centering
@@ -154,7 +154,7 @@ The third test problem, denoted as ZDT3 in \cite{deb2001multi} is shown below.
 0 &\leq  \textbf{x}  \leq 1 \\
 \end{align*}
 
-\noindent The true Pareto frontier for this problem again occurs when $x_i$ = 0 for i = 2,...,30. Figure~\ref{fig:ZDT3} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:ZDT3} summarizes the mean quality metrics for each algorithm for ten runs. \newline
+\noindent The true Pareto frontier for this problem again occurs when $x_i$ = 0 for i = 2,...,30. The fitness parameters selected in this problem were $\alpa = 1$, $\sigma = 0158$ and $\epsilon = 0.22$. Again, the number of chromosomes in this problem was 300. Figure~\ref{fig:ZDT3} shows a sample result from both MATLABs built in MOGA and the MOGA developed in this project. Table~\ref{tab:ZDT3} summarizes the mean quality metrics for each algorithm for ten runs. \newline
 
 \begin{figure}[H]
   \caption{Example Pareto Results for ZDT3}
@@ -183,12 +183,9 @@ OS & 0.8565 (0.0098) & 0.8489 (0.0180) \\ \hline
 
 \noindent Overall, MATLABs MOGA outperforms the MOGA developed in this project in both coverage difference and Pareto spread. A paired t-test shows that the difference in the means for coverage difference is statistically significant (p<0.05), while the difference is not statistically significant in Pareto Spread (p=0.21). \newline
 
-
-\noindent Overall, our MOGA outperformed MATLABs MOGA in both quality metrics. However, by examining the Pareto frontiers, it is clear that neither algorithm is truely satisfactory in estimating the true Pareto frontier. 
-
 \section{Constrained MOGA Problems}
 
-There are many ways in which fitness evaluation can be accomplished for constraints. In general, some factors which should be included in fitness evaluation are the feasibility of an individual, the amount of infeasibility, and the number of violated constraints for a certain individual. Several methods to take into account these factors are described in \cite{kurpati2002constraint}. For this project, all three parameters are used to evaluated the fitness of individuals in constrained problems. This method is denoted at CH-I4 in \cite{kurpati2002constraint}. \newline
+There are many ways in which fitness evaluation can be accomplished for constrainted problems. In general, some factors which may be included in fitness evaluation are the feasibility of an individual, the amount of infeasibility, and the number of violated constraints for a certain individual. Several methods to take into account these factors are described in \cite{kurpati2002constraint}. For this project, all three parameters are used to evaluated the fitness of individuals in constrained problems. This method is denoted at CH-I4 in \cite{kurpati2002constraint}. \newline
 
 \noindent As in the unconstrained algorithm, there are fitness parameters which can be chosen to place more or less emphasis on any of the factors (i.e., amount of feasibility, etc.). For each test problem, these factors were chosen such that the "best" resulting Pareto frontier could be obtained. "Best", here is meant to describe the Pareto spread and coverage difference of the resulting frontier. The two factors which could be tuned in this algorithm were denoted as CF1 and CF2. CF1 is the factor affects the emphasis on the amount of infeasibility of an individual. Whereas CF2 affects the emphasis on the number of violated constraints. \newline
 
@@ -196,7 +193,7 @@ There are many ways in which fitness evaluation can be accomplished for constrai
 
 
 \subsection{OSY} 
-This test problem, denoted as OSY in \cite{deb2001multi} is shown below, Figure~\ref{fig:OSY_true} shows the true Pareto frontier for this problem.
+This test problem, denoted as OSY in \cite{deb2001multi} is shown below, Figure~\ref{fig:OSY_true} shows the true Pareto frontier for this problem. The factors chosen for this problem were $CF1 = 0.005$ and $CF2 = 0.015$, this placed a higher weight of the number of constraint violations than the amount of infeasibility. 
 
 
 \begin{align*}
@@ -246,7 +243,7 @@ OS & 0.5322 (0.3393) & 0.9608 (0.2427) \\ \hline
 \end{figure}
 \newpage
 \subsection{TNK} 
-This test problem, denoted as TNK in \cite{deb2001multi} is shown below with the true Pareto frontier shown in Figure~\ref{fig:TNK_true}.
+This test problem, denoted as TNK in \cite{deb2001multi} is shown below with the true Pareto frontier shown in Figure~\ref{fig:TNK_true}. Constraint parameters CF1 and CF2 were both chosen to be 0.01 to place equal emphasis on amount of infeasibility and number of violated constraints.
 
 \begin{align*}
 \textrm{Minimize} ~~~~~ f_1(\textbf{x}) &= x_1 \\
@@ -292,7 +289,7 @@ OS & 0.4177 (0.3216) & 0.9763 (0.0178)\\ \hline
 \noindent Comparing the estimated Pareto frontiers to the true Pareto frontier, is is clear that our MOGA outperforms MATLAB's MOGA. The Pareto spread in our MOGA is significantly higher however the coverage difference is higher in MATLABs MOGA (p<0.05).
 \newpage
 \subsection{CTP} 
-This test problem, denoted as CTP in \cite{deb2001multi} is shown below and the true Pareto frontier is shown in Figure~\ref{fig:CTP_true}. 
+This test problem, denoted as CTP in \cite{deb2001multi} is shown below and the true Pareto frontier is shown in Figure~\ref{fig:CTP_true}. Just as in TNK, constraint parameters CF1 and CF2 were both chosen to be 0.01 to place equal emphasis on amount of infeasibility and number of violated constraints.
 
 
 \begin{align*}
@@ -367,7 +364,7 @@ g_2(x) &= (x_1 - 0.5)^2 + (x_2 - 0.5)^2 -0.5 \leq 0 \\
 -1& \leq p \leq 3\\
 \end{align*}
 
-\noindent Figure~\ref{fig:robust} shows a sample result from both MATLABs built in MOGA and the robust MOGA developed in this project. Table~\ref{tab:robustTNK} summarizes the mean quality metrics for each algorithm for ten runs.
+\noindent Figure~\ref{fig:robust} shows a sample result from both MATLABs built in MOGA and the robust MOGA developed in this project. Table~\ref{tab:robustTNK} summarizes the mean quality metrics for each algorithm for ten runs. \newline
 \begin{figure}[H]
   \caption{Example Pareto Results for TNK}
   \centering
@@ -445,6 +442,11 @@ OS & 0.4794 (0.1220) \\ \hline
 %\end{tabular}
 %\label{tab:robustTNK} 
 %\end{table}
+
+\section{Conclusion}
+
+Overall, it was found that different optimization algorithms result in a range of solutions for a given test problem. Thus it is important, when developing an optimization algorithm, to test against a range of optimization problems. In addition, it was also concluded that special attention should be paid to tunable parameters within each algorithm. Understanding the nature of the parameter and how it affects the algorithm is crucial to obtaining the "true" Pareto frontier. 
+
 
  
 \vspace{-0.1in}

@@ -1,6 +1,8 @@
 function [ params,A,b,Aeq,beq,LB,UB,true_P ] = FuncParams( prob )
 % Return the chosen optimization parameters given the problem number
 
+global DP
+
 switch prob
     case 1 % ZDT1
         nvar = 30; LB = zeros(1,nvar); UB = ones(1,nvar);

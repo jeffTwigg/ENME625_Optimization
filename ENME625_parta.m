@@ -1,5 +1,5 @@
 clear all; close all; clc; warning off;
-
+tic
 global alpha sigma epsilon Mmoga CF1 CF2 DP
 prompt3 = 'Would you like to run Test Problems or Flight Path Problem? \n 1 - Test Problems \n 2 - Flight Path Problem';
 FPPYN = input(prompt3);
@@ -10,6 +10,11 @@ if FPPYN == 1
 
     prompt = 'Which Test Problem Do You Want To Run? \n 1 - ZDT1\n 2 - ZDT2 \n 3 - ZDT3 \n 4 - OSY \n 5 - TNK \n 6 - CTP \n 7 - TNK Robust';
     prob = input(prompt);
+    
+    if runType == 2
+        prompt4 = 'There are 10 example test runs for this problem. Which one would you like to see? (1-10)';
+        testnum = input(prompt4);
+    end
 
     %% Load Selected Problem and Optimization Parameters
 
@@ -85,8 +90,17 @@ if FPPYN == 1
         plot(Pareto(:,1),Pareto(:,2),'gv','LineWidth',2,'MarkerSize',10)
         hold on; grid on; legend('MATLABs MOGA','Our MOGA')
         xlabel('f_1'); ylabel('f_2')
+        
+        CD = coverageDifference2(Pareto); %Coverage Difference of Our MOGA
+        CD_M = coverageDifference2(Fmoga(:,1:2));  %Coverage Difference of MATLABs MOGA
+
+        max_P1 = max(true_P(:,1)); min_P1 = min(true_P(:,1));
+        max_P2 = max(true_P(:,2)); min_P2 = min(true_P(:,2));
+
+        OS = ParetoSpread(Pareto,[max_P1 max_P2],[min_P1 min_P2]); %Pareto Spread of Our MOGA
+        OS_M = ParetoSpread(Fmoga,[max_P1 max_P2],[min_P1 min_P2]); %Pareto Spread of MATLABs MOGA
     elseif runType == 2
-        test = 1;
+        test = testnum;
         load(['results_and_params',num2str(prob),'_nChr',num2str(nChrome),'_nRun',num2str(nRun),'_nTest',num2str(test)])
         close;
 
@@ -107,10 +121,10 @@ if FPPYN == 1
         OS_M = ParetoSpread(Fmoga,[max_P1 max_P2],[min_P1 min_P2]); %Pareto Spread of MATLABs MOGA
 
     end
-elseif FPPYN == 2 %Outputs solutions for FPP. Required files are FlightPathOpt.m, getDistanceExclustionZone.m, 
-                  %makeWindFun.m, getTimeFromPath.m, and flightConstraints.m.
+elseif FPPYN == 2 %Outputs solutions for FPP.
     seed = 50; 
     FlightPathOpt(seed); 
 else 
     fprintf('Not a valid input')
 end
+toc

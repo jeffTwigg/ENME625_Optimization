@@ -40,7 +40,7 @@ switch prob
         A = [-1 -1 0 0 0 0;1 1 0 0 0 0;-1 1 0 0 0 0;1 -3 0 0 0 0]; 
         b = [-2;6;2;2];
         Aeq = []; beq = [];
-        nChrome = 60; nRun = 100;
+        nChrome = 60; nRun = 1000;
         alpha=[]; sigma=[]; epsilon=[];
         true_P = [5,-275;75,-45];
         CF1 = 0.005; CF2 = 0.015;
